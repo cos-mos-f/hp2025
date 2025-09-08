@@ -1,0 +1,7 @@
+{
+  "name": "@hp2025/server",
+  "private": "true",
+  "scripts": {
+    "dev": "concurrently -n client,server -c auto \\npm:dev"
+  }
+}
