@@ -8,7 +8,7 @@
     "biome:format": "biome format --write .",
     "biome:ci": "biome ci .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev:page":"cd ./home-page && npm run dev"
+    "dev:page": "cd ./home-page && npm run dev"
   },
   "repository": {
     "type": "git",
