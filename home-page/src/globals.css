@@ -23,11 +23,6 @@ body {
 }
 
 
-button{
-  border: none;
-  background-color: transparent;
-  font-family: 'Bodoni', Didot, 'Century', "Times New Roman", serif, 'Yu Mincho', 'Hiragino Mincho ProN', 'MS PMincho' ;
-}
 /* Optional antialiasing utility (applied to <body> in index.html) */
 .antialiased {
   -webkit-font-smoothing: antialiased;
