@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Expose font variables similar to next/font/local */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family:  'Bodoni', Didot, 'Century', "Times New Roman", serif, 'Yu Mincho', 'Hiragino Mincho ProN', 'MS PMincho';
+  font-size: 18pt;
+  font-weight: 100;
+  letter-spacing: -1.5px;
+}
+
+
+/* Optional antialiasing utility (applied to <body> in index.html) */
+.antialiased {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* スマホ用の回転スタイル */
+@media screen and (max-width: 768px) {
+  body {
+    transform: rotate(90deg);
+  font-size: 16pt;
+  }
+}
+
+* {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox (古いバージョン) */
+  -ms-user-select: none;     /* IE10+ */
+  user-select: none;         /* 標準 */
+}
+img {
+  user-select: none;      
+}
