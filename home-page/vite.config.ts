@@ -5,5 +5,5 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: process.env.GITHUB_PAGES ? "/hp2025/" : undefined,
+  base: process.env.NODE_ENV === "production" ? "/hp2025/" : "/",
 });
