@@ -107,11 +107,11 @@ export default function App() {
       setCurrentPositionArtBoard(currentIndex / (imageList.length - 1));
     }
   }, [currentIndex]);
-  useEffect(() => {
-    fetch("https://backend.cos-mos-f.com/notify")
-      .then(() => console.log("通知送信"))
-      .catch((err) => console.log("通知失敗", err));
-  }, []);
+  // useEffect(() => {
+  //   fetch("https://backend.cos-mos-f.com/notify")
+  //     .then(() => console.log("通知送信"))
+  //     .catch((err) => console.log("通知失敗", err));
+  // }, []);
   const ChangeImage = (index: number) => {
     setPageType("artBoard");
     setCurrentIndex(index);
@@ -148,6 +148,7 @@ export default function App() {
 
   return (
     <div className={styles.container}>
+      <div className="bg-red-500">tailwind test</div>
       <div className={styles.main}>
         <ScrollBar
           currentPosition={currentPosition}
