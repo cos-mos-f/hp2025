@@ -1,0 +1,50 @@
+.scrollBarContainer {
+  left: 20px;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.bar {
+  width: 0.5px;
+  height: 100%;
+  background-color: black;
+}
+
+.scrollBarContainer:hover .bar {
+  width: 2px;
+  box-sizing:border-box;
+
+}
+
+.indicator {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  transform: translateY(-50%); /* インジケータの中央揃え */
+}
+/* スマホ用の回転スタイル */
+@media screen and (max-width: 768px) {
+  .scrollBarContainer {
+    position: fixed;
+    top: 5vw;
+    height: 90vw;
+    width: 30px;
+  }
+  .indicator{
+    width: 40px;
+    height: 40px;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .bar {
+    background-color: #fff;
+  }
+  .indicator{
+    filter: invert(1) brightness(2);
+  }
+}

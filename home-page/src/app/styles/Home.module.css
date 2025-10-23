@@ -1,0 +1,50 @@
+.container {
+  height: 100vh; /* 画面全体の高さ */
+  width: 100vw; /* 画面全体の幅 */
+  margin: 0;
+  padding: 0; /* paddingをゼロに */
+  position: relative; /* 子要素の位置指定用 */
+  overflow: auto;
+}
+/* スマホ用の回転スタイル */
+@media screen and (max-width: 768px) {
+  .container {
+    width: 100vh; /* 高さを幅として設定 */
+    height: 100vw; /* 高さを幅として設定 */
+  }
+}
+.main {
+  position: relative; /* z-index指定のためrelativeに */
+  display: flex;
+  height: 100%;
+  width: fit-content;
+  padding: 44px;
+  z-index: 2; /* zインデックスを高く設定 */
+  overflow: none;
+}
+
+.back {
+  position: fixed; /* mainの下に配置 */
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row-reverse;
+  height: 100%; /* コンテナ全体にフィット */
+  width: 100%; /* コンテナ全体にフィット */
+  padding: 0;
+  z-index: 1; /* mainの下になるように設定 */
+  overflow: auto;
+  scrollbar-width: none; /* Firefoxでスクロールバー非表示 */
+  -webkit-overflow-scrolling: touch; /* モバイルデバイスのスムーズスクロール */
+  -ms-overflow-style: none; /* IE・Edgeでスクロールバー非表示 */
+}
+/* スマホ用の回転スタイル */
+@media screen and (max-width: 768px) {
+  .back {
+    width: 100vh; /* 高さを幅として設定 */
+    height: 100vw; /* 高さを幅として設定 */
+  }
+}
+.back::-webkit-scrollbar {
+  display: none; /* ChromeやSafariでスクロールバー非表示 */
+}
