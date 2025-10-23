@@ -1,12 +1,47 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>home-page</title>
+
+    <title>cosmos gallery</title>
+
+  <!-- Favicon (BASE_URL 対応: ルートスラッシュを外して相対パスに) -->
+  <link rel="icon" type="image/svg+xml" href="vite.svg" />
+
+    <!-- Primary Meta Tags -->
+    <meta name="description" content="こすもす-cosmos-ポートフォリオ" />
+    <meta name="keywords" content="こすもす, cosmos, ポートフォリオ, イラスト, デジタルアート, アニメイラスト, キャラクターイラスト, イラストレーター" />
+    <meta name="author" content="こすもす" />
+
+    <!-- Canonical & Robots -->
+    <link rel="canonical" href="https://cos-mos-f.com" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Alternate Languages -->
+    <link rel="alternate" hreflang="ja" href="https://cos-mos-f.com/ja" />
+    <link rel="alternate" hreflang="en" href="https://cos-mos-f.com/en" />
+    <link rel="alternate" hreflang="x-default" href="https://cos-mos-f.com" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="cosmos gallery" />
+    <meta property="og:title" content="cosmos gallery" />
+    <meta property="og:description" content="こすもす-cosmos-ポートフォリオ" />
+  <!-- BASE_URL 対応のため相対パス指定 -->
+  <meta property="og:image" content="metaImage.jpg" />
+    <meta property="og:url" content="https://cos-mos-f.com" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="cosmos gallery" />
+    <meta name="twitter:description" content="こすもす-cosmos-ポートフォリオ" />
+  <!-- BASE_URL 対応のため相対パス指定 -->
+  <meta name="twitter:image" content="metaImage.jpg" />
   </head>
-  <body>
+  <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

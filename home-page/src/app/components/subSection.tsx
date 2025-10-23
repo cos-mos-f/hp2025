@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../styles/subSection.module.css";
 import LineText from "./lineText";
 import LinkBox from "./linkBox";

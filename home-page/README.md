@@ -1,3 +1,18 @@
+# cosmos gallery (home-page)
+
+このアプリは Vite + React (TypeScript) で構築されています。Next.js の `layout.tsx` に相当する以下の要素を本プロジェクトへ移植済みです。
+
+- SEO メタ情報（title/description/keywords/robots/canonical/alternate）
+- Open Graph / Twitter カード
+- ローカルフォント（GeistSans / GeistMono）の適用
+
+重要事項:
+
+- OG/Twitter 用の共有画像は `public/metaImage.jpg` というパスで参照しています。任意の画像ファイルをこの場所に配置してください（推奨: 1200x630）。
+- ローカルフォントは `src/app/fonts/GeistVF.woff` および `src/app/fonts/GeistMonoVF.woff` を使用しています。別のフォントに差し替える場合は `src/globals.css` の `@font-face` と `:root` の `--font-geist-*` を調整してください。
+
+---
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

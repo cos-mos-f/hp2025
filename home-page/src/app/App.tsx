@@ -46,7 +46,6 @@ export default function App() {
   // 全ての画像をプリロードする関数
   const preloadImages = async (images: string[]) => {
     const base = import.meta.env.BASE_URL;
-    console.log("Base URL for images:", base);
     const promises = images.map((filename) => {
       return new Promise<void>((resolve, reject) => {
         const img = new Image();

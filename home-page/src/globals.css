@@ -2,9 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Local fonts migrated from Next.js layout (Geist) */
+@font-face {
+  font-family: 'GeistSans';
+  src: url('./app/fonts/GeistVF.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GeistMono';
+  src: url('./app/fonts/GeistMonoVF.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Expose font variables similar to next/font/local */
+  --font-geist-sans: 'GeistSans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --font-geist-mono: 'GeistMono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,10 +37,21 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family:   'Bodoni', Didot, 'Century', "Times New Roman", serif, 'Yu Mincho', 'Hiragino Mincho ProN', 'MS PMincho';
+  font-family: var(--font-geist-sans), 'Bodoni', Didot, 'Century', "Times New Roman", serif, 'Yu Mincho', 'Hiragino Mincho ProN', 'MS PMincho';
   font-size: 18pt;
   font-weight: 100;
   letter-spacing: -1.5px;
+}
+
+
+button{
+  border: none;
+  background-color: transparent;
+}
+/* Optional antialiasing utility (applied to <body> in index.html) */
+.antialiased {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* スマホ用の回転スタイル */
