@@ -8,22 +8,11 @@ import Loading from "./Loading";
 
 type GalleryProps = {
   imageList: ImageItemWithIndex[];
-  currentPosition: number;
-  onScrollChange: (position: number) => void;
   onClickImage: (index: number) => void;
 };
 
-const Gallery = ({
-  imageList,
-  currentPosition,
-  onScrollChange,
-  onClickImage,
-}: GalleryProps) => {
-  const { galleryRef, content, isLoading } = useGallery(
-    imageList,
-    currentPosition,
-    onScrollChange,
-  );
+const Gallery = ({ imageList, onClickImage }: GalleryProps) => {
+  const { galleryRef, content, isLoading } = useGallery(imageList);
 
   const base = import.meta.env.BASE_URL;
 
@@ -48,9 +37,7 @@ const Gallery = ({
         key={key}
         className={`flex shrink-0 gap-5 ${isRow ? "flex-row" : "flex-col"}`}
       >
-        {node.items.map((child, index) =>
-          renderNode(child, `${key}-${index}`),
-        )}
+        {node.items.map((child, index) => renderNode(child, `${key}-${index}`))}
       </div>
     );
   };
@@ -66,9 +53,9 @@ const Gallery = ({
   return (
     <div
       ref={galleryRef}
-      className="scrollbar-hidden flex h-full w-screen flex-row overflow-x-scroll py-10 max-md:fixed max-md:left-0 max-md:h-[100vw] max-md:w-[100vh]"
+      className="flex h-screen w-fit flex-row py-10 max-md:h-[100vw] "
     >
-      <div className="h-full w-[40vw] shrink-0 max-md:w-[40vh]" />
+      <div className="h-full w-[40vw] shrink-0 max-md:w-[40vh] " />
       {isLoading ? (
         <div className="flex items-center justify-center">
           <Loading />

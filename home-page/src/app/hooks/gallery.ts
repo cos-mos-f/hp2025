@@ -22,21 +22,20 @@ export type GalleryLayoutGroup = {
 
 export type GalleryLayoutNode = GalleryLayoutImage | GalleryLayoutGroup;
 
-export const useGallery = (
-  imageList: ImageItemWithIndex[],
-  currentPosition: number,
-  onScrollChange: (position: number) => void,
-) => {
+export const useGallery = (imageList: ImageItemWithIndex[]) => {
   const galleryRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<GalleryLayoutGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
   const buildLayout = useCallback(() => {
     const layout: GalleryLayoutGroup[] = [];
     const galleryElement = galleryRef.current;
     if (!galleryElement) return layout;
 
-    const { width, height } = galleryElement.getBoundingClientRect();
+    const { width, height } = containerSize.width > 0 
+      ? containerSize 
+      : galleryElement.getBoundingClientRect();
     const frame = Math.min(width, height);
     let i = 0;
     while (i < imageList.length) {
@@ -228,65 +227,39 @@ export const useGallery = (
       }
     }
     return layout;
-  }, [imageList]);
+  }, [imageList, containerSize]);
+
+  // ResizeObserverでコンテナのサイズを監視
+  useLayoutEffect(() => {
+    const galleryElement = galleryRef.current;
+    if (!galleryElement) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      const { width, height } = galleryElement.getBoundingClientRect();
+      setContainerSize({ width, height });
+    });
+
+    resizeObserver.observe(galleryElement);
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useLayoutEffect(() => {
-    setContent(buildLayout());
-  }, [buildLayout]);
+    if (containerSize.width > 0) {
+      setContent(buildLayout());
+    }
+  }, [buildLayout, containerSize]);
 
   useEffect(() => {
-    setContent(buildLayout());
-  }, [imageList, buildLayout]);
+    if (containerSize.width > 0) {
+      setContent(buildLayout());
+    }
+  }, [imageList, buildLayout, containerSize]);
 
   useEffect(() => {
     setIsLoading(true);
     const timeout = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timeout);
   }, [imageList]);
-
-  useEffect(() => {
-    const galleryElement = galleryRef.current;
-    if (!galleryElement) return;
-    const maxScrollLeft =
-      galleryElement.scrollWidth - galleryElement.clientWidth;
-    const scrollLeft = maxScrollLeft * currentPosition;
-    galleryElement.scrollTo({ left: scrollLeft, behavior: "smooth" });
-  }, [currentPosition]);
-
-  useEffect(() => {
-    const galleryElement = galleryRef.current;
-    if (!galleryElement) return;
-    let isScrolling = false;
-    let scrollDelta = 0;
-
-    const handleWheel = (event: WheelEvent) => {
-      scrollDelta += event.deltaY;
-      onScrollChange(
-        galleryElement.scrollLeft /
-          (galleryElement.scrollWidth - galleryElement.clientWidth),
-      );
-      if (!isScrolling) {
-        isScrolling = true;
-        smoothScroll();
-      }
-    };
-
-    const smoothScroll = () => {
-      galleryElement.scrollBy({ left: scrollDelta / 5 });
-      scrollDelta *= 0.85;
-      if (Math.abs(scrollDelta) > 0.5) {
-        requestAnimationFrame(smoothScroll);
-      } else {
-        isScrolling = false;
-        scrollDelta = 0;
-      }
-    };
-
-    document.addEventListener("wheel", handleWheel);
-    return () => {
-      document.removeEventListener("wheel", handleWheel);
-    };
-  }, [onScrollChange]);
 
   return { galleryRef, content, isLoading };
 };

@@ -13,7 +13,7 @@ const ArtBoard = ({ imageList, index, changeIndex }: ArtBoardProps) => {
 
   return (
     <div className="flex w-full flex-row items-end justify-end p-10 text-center">
-      <div className="mb-0 mr-5 h-[30px] select-text text-[16pt] tracking-[-1px] max-md:text-[10pt]" style={{ transform: "scaleX(1.25)", transformOrigin: "right" }}>
+      <div className="mb-0 mr-5 h-[30px] select-text text-[16pt] tracking-[-1px] max-md:text-[10pt]">
         {imageList[index].title}
       </div>
       <div

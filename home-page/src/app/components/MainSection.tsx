@@ -21,7 +21,6 @@ const MainSection = ({ pageType, setPageType }: MainSectionProps) => {
         <Tabs.Trigger
           value="ArtBoard"
           className="pb-8 text-left text-[28pt] font-100 leading-[32pt] tracking-[-2px] transition-opacity hover:opacity-80 data-[state=active]:opacity-100 max-md:text-[20pt]"
-          style={{ transform: "scaleX(1.5)", transformOrigin: "left" }}
         >
           cosmos
           <br />
