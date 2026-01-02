@@ -25,7 +25,7 @@ export type GalleryLayoutNode = GalleryLayoutImage | GalleryLayoutGroup;
 export const useGallery = (imageList: ImageItemWithIndex[]) => {
   const galleryRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<GalleryLayoutGroup[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
   const buildLayout = useCallback(() => {
