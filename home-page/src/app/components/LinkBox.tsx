@@ -1,0 +1,29 @@
+interface LinkBoxProps {
+  platform: string;
+  userId: string;
+  url: string;
+}
+
+const LinkBox = ({ platform, userId, url }: LinkBoxProps) => {
+  const base = import.meta.env.BASE_URL;
+
+  return (
+    <a
+      href={url}
+      className="group relative flex h-10 items-end pr-12 no-underline"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span className="w-[150px]">{platform}</span>
+      <span className="select-text">{userId}</span>
+      <span className="pointer-events-none absolute bottom-0 left-0 h-px w-[calc(100%-50px)] bg-current" />
+      <img
+        src={`${base}images/arrow.svg`}
+        alt="arrow"
+        className="absolute -bottom-10px right-0 h-[50px] opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:invert dark:brightness-200"
+      />
+    </a>
+  );
+};
+
+export default LinkBox;
