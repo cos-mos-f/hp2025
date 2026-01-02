@@ -12,7 +12,7 @@ const ArtBoard = ({ imageList, index, changeIndex }: ArtBoardProps) => {
     useArtBoard(imageList, index, changeIndex);
 
   return (
-    <div className="flex w-full flex-row items-end justify-end p-10 text-center">
+    <div className="flex w-screen flex-row items-end justify-end p-10 text-center">
       <div className="mb-0 mr-5 h-[30px] select-text text-[16pt] tracking-[-1px] max-md:text-[10pt]">
         {imageList[index].title}
       </div>

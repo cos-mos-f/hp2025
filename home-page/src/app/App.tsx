@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import Loading from "./components/Loading";
 import ArtBoard from "./components/ArtBoard";
 import Gallery from "./components/Gallery";
@@ -17,6 +17,7 @@ export default function App() {
     useImages();
   const { isLoading } = usePreloadImages(allImages, 10);
   const { scrollPosition, setScrollPosition } = useScroll();
+  const [isBarHovered, setIsBarHovered] = useState(false);
 
   const indexToScrollPosition = (index: number, total: number) => {
     if (total <= 1) return 0;
@@ -36,6 +37,7 @@ export default function App() {
   };
 
   const touchStartX = useRef(0);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -48,6 +50,36 @@ export default function App() {
     viewport.scrollLeft += deltaX;
     touchStartX.current = touchCurrentX;
   };
+
+  // Sync scrollPosition with viewport scroll
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = viewport;
+      const maxScroll = scrollWidth - clientWidth;
+      if (maxScroll > 0) {
+        const newPosition = scrollLeft / maxScroll;
+        setScrollPosition(newPosition);
+      }
+    };
+
+    viewport.addEventListener("scroll", handleScroll);
+    return () => viewport.removeEventListener("scroll", handleScroll);
+  }, [setScrollPosition]);
+
+  // Sync viewport scroll with scrollPosition changes from scrollbar
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const { scrollWidth, clientWidth } = viewport;
+    const maxScroll = scrollWidth - clientWidth;
+    const targetScroll = scrollPosition * maxScroll;
+
+    viewport.scrollLeft = targetScroll;
+  }, [scrollPosition]);
 
   if (isLoading) {
     return <Loading />;
@@ -63,6 +95,86 @@ export default function App() {
           setGalleryType={setGalleryType}
         />
       </div>
+      {/* Custom vertical scrollbar */}
+      <div
+        className="fixed left-5 top-10 bottom-10 z-1000 flex w-10 flex-col items-center justify-center max-md:w-8 cursor-pointer"
+        onMouseEnter={() => setIsBarHovered(true)}
+        onMouseLeave={() => setIsBarHovered(false)}
+        onClick={(e) => {
+          const barElement = e.currentTarget;
+          const rect = barElement.getBoundingClientRect();
+          const y = e.clientY - rect.top;
+          const ratio = y / rect.height;
+          const newPosition = Math.max(0, Math.min(1, (ratio - 0.025) / 0.95));
+          setScrollPosition(newPosition);
+        }}
+        onMouseDown={(e) => {
+          // バー全体でのドラッグ操作
+          if (
+            e.target === e.currentTarget ||
+            (e.target as HTMLElement).tagName === "DIV"
+          ) {
+            e.preventDefault();
+
+            const handleMouseMove = (moveEvent: MouseEvent) => {
+              const barElement = e.currentTarget;
+              const rect = barElement.getBoundingClientRect();
+              const y = moveEvent.clientY - rect.top;
+              const ratio = y / rect.height;
+              const newPosition = Math.max(
+                0,
+                Math.min(1, (ratio - 0.025) / 0.95),
+              );
+              setScrollPosition(newPosition);
+            };
+
+            const handleMouseUp = () => {
+              document.removeEventListener("mousemove", handleMouseMove);
+              document.removeEventListener("mouseup", handleMouseUp);
+            };
+
+            document.addEventListener("mousemove", handleMouseMove);
+            document.addEventListener("mouseup", handleMouseUp);
+          }
+        }}
+      >
+        <div
+          className={`h-full bg-black dark:bg-white transition-all ${isBarHovered ? "w-0.5" : "w-[0.5px]"}`}
+        />
+        <div
+          className="absolute w-[60px] h-[60px] bg-center bg-no-repeat bg-size-[60px_60px] cursor-pointer max-md:w-10 max-md:h-10 max-md:bg-size-[40px_40px] dark:invert dark:brightness-200"
+          style={{
+            backgroundImage: "url('/images/star.svg')",
+            top: `${scrollPosition * 95 + 2.5}%`,
+            transform: "translateY(-50%)",
+          }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const barElement = e.currentTarget.parentElement;
+            if (!barElement) return;
+
+            const handleMouseMove = (moveEvent: MouseEvent) => {
+              const rect = barElement.getBoundingClientRect();
+              const y = moveEvent.clientY - rect.top;
+              const ratio = y / rect.height;
+              const newPosition = Math.max(
+                0,
+                Math.min(1, (ratio - 0.025) / 0.95),
+              );
+              setScrollPosition(newPosition);
+            };
+
+            const handleMouseUp = () => {
+              document.removeEventListener("mousemove", handleMouseMove);
+              document.removeEventListener("mouseup", handleMouseUp);
+            };
+
+            document.addEventListener("mousemove", handleMouseMove);
+            document.addEventListener("mouseup", handleMouseUp);
+          }}
+        />
+      </div>
       <RadixScrollArea.Root
         className="
       fixed left-0 top-0 z-10 
@@ -71,6 +183,7 @@ export default function App() {
       "
       >
         <RadixScrollArea.Viewport
+          ref={viewportRef}
           className="h-full w-full"
           onWheel={(e) => {
             const viewport = e.currentTarget;
@@ -97,11 +210,8 @@ export default function App() {
             )}
           </div>
         </RadixScrollArea.Viewport>
-        <RadixScrollArea.Scrollbar
-          orientation="horizontal"
-          className="flex h-2.5 touch-none select-none flex-col bg-transparent hover:h-4 transition-all duration-200"
-        >
-          <RadixScrollArea.Thumb className="relative flex-1 rounded-full bg-black dark:bg-white" />
+        <RadixScrollArea.Scrollbar orientation="horizontal" className="hidden">
+          <RadixScrollArea.Thumb />
         </RadixScrollArea.Scrollbar>
       </RadixScrollArea.Root>
     </div>

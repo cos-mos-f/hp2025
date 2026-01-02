@@ -25,7 +25,7 @@ export type GalleryLayoutNode = GalleryLayoutImage | GalleryLayoutGroup;
 export const useGallery = (imageList: ImageItemWithIndex[]) => {
   const galleryRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<GalleryLayoutGroup[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
   const buildLayout = useCallback(() => {
@@ -33,9 +33,10 @@ export const useGallery = (imageList: ImageItemWithIndex[]) => {
     const galleryElement = galleryRef.current;
     if (!galleryElement) return layout;
 
-    const { width, height } = containerSize.width > 0 
-      ? containerSize 
-      : galleryElement.getBoundingClientRect();
+    const { width, height } =
+      containerSize.width > 0
+        ? containerSize
+        : galleryElement.getBoundingClientRect();
     const frame = Math.min(width, height);
     let i = 0;
     while (i < imageList.length) {
@@ -255,11 +256,11 @@ export const useGallery = (imageList: ImageItemWithIndex[]) => {
     }
   }, [imageList, buildLayout, containerSize]);
 
-  useEffect(() => {
-    setIsLoading(true);
-    const timeout = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timeout);
-  }, [imageList]);
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   const timeout = setTimeout(() => setIsLoading(false), 1000);
+  //   return () => clearTimeout(timeout);
+  // }, [imageList]);
 
   return { galleryRef, content, isLoading };
 };
