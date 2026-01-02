@@ -1,13 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import styles from "./styles/Home.module.css";
-import ScrollBar from "./components/scrollBar";
-import ArtBoard from "./components/artBoard";
-import Gallery from "./components/gallery";
-import MainSection from "./components/mainSection";
-import SubSection from "./components/subSection";
 import imageList from "./imageList.json";
-import InitialLoading from "./components/initialLoading";
+import Loading from "./components/Loading";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -118,23 +112,10 @@ export default function App() {
 
   const renderContent = () => {
     if (pageType === "artBoard") {
-      return (
-        <ArtBoard
-          imageList={imageList}
-          index={currentIndex}
-          changeIndex={changeIndex}
-        />
-      );
+      return <div>art board</div>;
     }
     if (pageType === "Gallery") {
-      return (
-        <Gallery
-          imageList={filteredImageList}
-          currentPosition={currentPositionGallery}
-          onScrollChange={handleGalleryScrollChange}
-          onClickImage={ChangeImage}
-        />
-      );
+      return <div>gallery</div>;
     }
     if (pageType === "Contact") {
       return <div />;
@@ -142,26 +123,14 @@ export default function App() {
   };
 
   if (isLoading) {
-    return <InitialLoading />;
+    return <Loading />;
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <div className="bg-red-500">tailwind test</div>
-      <div className={styles.main}>
-        <ScrollBar
-          currentPosition={currentPosition}
-          onScrollChange={handleScrollChange}
-          setIsHovered={setIsScrollBarHovered}
-        />
-        <MainSection pageType={pageType} setPageType={setPageType} />
-        <SubSection
-          pageType={pageType}
-          galleryType={galleryType}
-          setGalleryType={setGalleryType}
-        />
-      </div>
-      <div className={styles.back}>{renderContent()}</div>
+      <div>main</div>
+      <div>{renderContent()}</div>
     </div>
   );
 }
