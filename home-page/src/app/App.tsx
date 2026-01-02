@@ -144,7 +144,7 @@ export default function App() {
         <div
           className="absolute w-[60px] h-[60px] bg-center bg-no-repeat bg-size-[60px_60px] cursor-pointer max-md:w-10 max-md:h-10 max-md:bg-size-[40px_40px] dark:invert dark:brightness-200"
           style={{
-            backgroundImage: "url('/images/star.svg')",
+            backgroundImage: `url('${import.meta.env.BASE_URL}/images/star.svg')`,
             top: `${scrollPosition * 95 + 2.5}%`,
             transform: "translateY(-50%)",
           }}
