@@ -23,5 +23,8 @@
   "homepage": "https://github.com/cos-mos-f/hp2025#readme",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"
+  },
+  "dependencies": {
+    "jotai": "^2.16.1"
   }
 }

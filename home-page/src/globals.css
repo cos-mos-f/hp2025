@@ -16,7 +16,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family:  'Bodoni', Didot, 'Century', "Times New Roman", serif, 'Yu Mincho', 'Hiragino Mincho ProN', 'MS PMincho';
+  font-family:  'Bodoni', Didot, 'Century', "Times New Roman",  'Yu Mincho', 'Hiragino Mincho ProN', 'MS PMincho', serif;
   font-size: 18pt;
   font-weight: 100;
   letter-spacing: -1.5px;
@@ -45,4 +45,53 @@ body {
 }
 img {
   user-select: none;      
+}
+
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.animate-star-spin {
+  animation: star-spin 2s infinite cubic-bezier(0.42, 0, 0.58, 1);
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f8f8f8 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes star-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: rotate(180deg);
+    animation-timing-function: ease-out;
+  }
+  75% {
+    transform: rotate(270deg);
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }

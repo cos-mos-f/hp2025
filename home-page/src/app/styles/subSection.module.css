@@ -1,9 +1,0 @@
-.subSection {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    justify-content: flex-end; /* 縦方向の位置を下に詰める */
-    align-items: flex-start; 
-    padding-bottom: 0px;
-  user-select: text;
-}

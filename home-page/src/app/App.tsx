@@ -1,160 +1,93 @@
 "use client";
-import { useState, useEffect } from "react";
-import styles from "./styles/Home.module.css";
-import ScrollBar from "./components/scrollBar";
-import ArtBoard from "./components/artBoard";
-import Gallery from "./components/gallery";
-import MainSection from "./components/mainSection";
-import SubSection from "./components/subSection";
-import imageList from "./imageList.json";
-import InitialLoading from "./components/initialLoading";
+import { useRef, useEffect, useState } from "react";
+import Loading from "./components/Loading";
+import ArtBoard from "./components/ArtBoard";
+import Gallery from "./components/Gallery";
+import MainSection from "./components/MainSection";
+import SubSection from "./components/SubSection";
+import { usePageType } from "./hooks/pageType";
+import { useImages } from "./hooks/images";
+import { usePreloadImages } from "./hooks/preloadImages";
+import * as RadixScrollArea from "@radix-ui/react-scroll-area";
+import { useScroll } from "./hooks/scroll";
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentPositionArtBoard, setCurrentPositionArtBoard] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentPositionGallery, setCurrentPositionGallery] = useState(0);
-  const [pageType, setPageType] = useState("artBoard");
-  const [currentPosition, setCurrentPosition] = useState(0);
-  const [isScrollBarHovered, setIsScrollBarHovered] = useState(false);
-  const [galleryType, setGalleryType] = useState("All");
-  //galleryTypeでフィルターしたimageList
-  const makeList = () => {
-    const list = [];
-    for (let i = 0; i < imageList.length; i++) {
-      const item = {
-        filename: imageList[i].filename,
-        title: imageList[i].title,
-        width: imageList[i].width,
-        height: imageList[i].height,
-        tag: imageList[i].tag,
-        index: i,
-      };
-      if (
-        (galleryType === "FanArt" && !item.tag.includes("f")) ||
-        (galleryType === "Original" && !item.tag.includes("o")) ||
-        (galleryType === "Work" && !item.tag.includes("w"))
-      ) {
-        continue;
+  const { pageType, setPageType } = usePageType();
+  const { allImages, filteredImages, galleryType, setGalleryType } =
+    useImages();
+  const { isLoading } = usePreloadImages(allImages, 10);
+  const { scrollPosition, setScrollPosition } = useScroll();
+  const [isBarHovered, setIsBarHovered] = useState(false);
+
+  const indexToScrollPosition = (index: number, total: number) => {
+    if (total <= 1) return 0;
+    return index / (total - 1);
+  };
+  const scrollPositionToIndex = (position: number, total: number) => {
+    if (total <= 1) return 0;
+    return Math.round(position * (total - 1));
+  };
+
+  const total = filteredImages.length;
+  const currentIndex = scrollPositionToIndex(scrollPosition, total);
+
+  const setCurrentIndex = (index: number) => {
+    const position = indexToScrollPosition(index, total);
+    setScrollPosition(position);
+  };
+
+  const touchStartX = useRef(0);
+  const viewportRef = useRef<HTMLDivElement>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const viewport = e.currentTarget;
+    const touchCurrentX = e.touches[0].clientX;
+    const deltaX = touchStartX.current - touchCurrentX;
+    viewport.scrollLeft += deltaX;
+    touchStartX.current = touchCurrentX;
+  };
+
+  // Sync scrollPosition with viewport scroll
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = viewport;
+      const maxScroll = scrollWidth - clientWidth;
+      if (maxScroll > 0) {
+        const newPosition = scrollLeft / maxScroll;
+        setScrollPosition(newPosition);
       }
-      list.push(item);
-    }
-    return list;
-  };
-  const [filteredImageList, setFilteredImageList] = useState(makeList());
+    };
 
-  // 全ての画像をプリロードする関数
-  const preloadImages = async (images: string[]) => {
-    const base = import.meta.env.BASE_URL;
-    const promises = images.map((filename) => {
-      return new Promise<void>((resolve, reject) => {
-        const img = new Image();
-        img.src = `${base}images/artWorks/${filename}`;
-        img.onload = () => resolve();
-        img.onerror = () => reject();
-      });
-    });
-    await Promise.all(promises);
-  };
+    viewport.addEventListener("scroll", handleScroll);
+    return () => viewport.removeEventListener("scroll", handleScroll);
+  }, [setScrollPosition]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // Sync viewport scroll with scrollPosition changes from scrollbar
   useEffect(() => {
-    // 全ての画像をプリロードし終わったらローディングを解除
-    const imageFilenames = imageList.map((image) => image.filename);
-    preloadImages(imageFilenames).then(() => setIsLoading(false));
-  }, []);
+    const viewport = viewportRef.current;
+    if (!viewport) return;
 
-  //ギャラリーの表示内容を更新
-  useEffect(() => {
-    const list = makeList();
-    setFilteredImageList(list);
-  }, [galleryType]);
+    const { scrollWidth, clientWidth } = viewport;
+    const maxScroll = scrollWidth - clientWidth;
+    const targetScroll = scrollPosition * maxScroll;
 
-  useEffect(() => {
-    if (pageType === "artBoard") {
-      setCurrentPosition(currentPositionArtBoard);
-    } else if (pageType === "Gallery") {
-      setCurrentPosition(currentPositionGallery);
-    }
-  }, [pageType, currentPositionArtBoard, currentPositionGallery]);
-
-  const handleScrollChange = (position: number) => {
-    if (pageType === "artBoard") {
-      setCurrentPositionArtBoard(position);
-    } else if (pageType === "Gallery") {
-      setCurrentPositionGallery(position);
-    }
-    setCurrentPosition(position);
-  };
-
-  const handleGalleryScrollChange = (position: number) => {
-    setCurrentPositionGallery(position);
-  };
-
-  const changeIndex = (index: number) => {
-    setCurrentIndex(index);
-  };
-
-  useEffect(() => {
-    const index = Math.round(currentPositionArtBoard * (imageList.length - 1));
-    if (currentIndex !== index) {
-      changeIndex(index);
-    }
-  }, [currentPositionArtBoard]);
-
-  useEffect(() => {
-    if (!isScrollBarHovered) {
-      setCurrentPositionArtBoard(currentIndex / (imageList.length - 1));
-    }
-  }, [currentIndex]);
-  // useEffect(() => {
-  //   fetch("https://backend.cos-mos-f.com/notify")
-  //     .then(() => console.log("通知送信"))
-  //     .catch((err) => console.log("通知失敗", err));
-  // }, []);
-  const ChangeImage = (index: number) => {
-    setPageType("artBoard");
-    setCurrentIndex(index);
-  };
-
-  const renderContent = () => {
-    if (pageType === "artBoard") {
-      return (
-        <ArtBoard
-          imageList={imageList}
-          index={currentIndex}
-          changeIndex={changeIndex}
-        />
-      );
-    }
-    if (pageType === "Gallery") {
-      return (
-        <Gallery
-          imageList={filteredImageList}
-          currentPosition={currentPositionGallery}
-          onScrollChange={handleGalleryScrollChange}
-          onClickImage={ChangeImage}
-        />
-      );
-    }
-    if (pageType === "Contact") {
-      return <div />;
-    }
-  };
+    viewport.scrollLeft = targetScroll;
+  }, [scrollPosition]);
 
   if (isLoading) {
-    return <InitialLoading />;
+    return <Loading />;
   }
 
   return (
-    <div className={styles.container}>
-      <div className="bg-red-500">tailwind test</div>
-      <div className={styles.main}>
-        <ScrollBar
-          currentPosition={currentPosition}
-          onScrollChange={handleScrollChange}
-          setIsHovered={setIsScrollBarHovered}
-        />
+    <div className="relative h-screen w-screen overflow-auto max-md:h-[100vw] max-md:w-[100vh]">
+      <div className="fixed left-0 top-0 z-20 flex h-full w-fit p-11">
         <MainSection pageType={pageType} setPageType={setPageType} />
         <SubSection
           pageType={pageType}
@@ -162,7 +95,125 @@ export default function App() {
           setGalleryType={setGalleryType}
         />
       </div>
-      <div className={styles.back}>{renderContent()}</div>
+      {/* Custom vertical scrollbar */}
+      <div
+        className="fixed left-5 top-10 bottom-10 z-1000 flex w-10 flex-col items-center justify-center max-md:w-8 cursor-pointer"
+        onMouseEnter={() => setIsBarHovered(true)}
+        onMouseLeave={() => setIsBarHovered(false)}
+        onClick={(e) => {
+          const barElement = e.currentTarget;
+          const rect = barElement.getBoundingClientRect();
+          const y = e.clientY - rect.top;
+          const ratio = y / rect.height;
+          const newPosition = Math.max(0, Math.min(1, (ratio - 0.025) / 0.95));
+          setScrollPosition(newPosition);
+        }}
+        onMouseDown={(e) => {
+          // バー全体でのドラッグ操作
+          if (
+            e.target === e.currentTarget ||
+            (e.target as HTMLElement).tagName === "DIV"
+          ) {
+            e.preventDefault();
+
+            const handleMouseMove = (moveEvent: MouseEvent) => {
+              const barElement = e.currentTarget;
+              const rect = barElement.getBoundingClientRect();
+              const y = moveEvent.clientY - rect.top;
+              const ratio = y / rect.height;
+              const newPosition = Math.max(
+                0,
+                Math.min(1, (ratio - 0.025) / 0.95),
+              );
+              setScrollPosition(newPosition);
+            };
+
+            const handleMouseUp = () => {
+              document.removeEventListener("mousemove", handleMouseMove);
+              document.removeEventListener("mouseup", handleMouseUp);
+            };
+
+            document.addEventListener("mousemove", handleMouseMove);
+            document.addEventListener("mouseup", handleMouseUp);
+          }
+        }}
+      >
+        <div
+          className={`h-full bg-black dark:bg-white transition-all ${isBarHovered ? "w-0.5" : "w-[0.5px]"}`}
+        />
+        <div
+          className="absolute w-[60px] h-[60px] bg-center bg-no-repeat bg-size-[60px_60px] cursor-pointer max-md:w-10 max-md:h-10 max-md:bg-size-[40px_40px] dark:invert dark:brightness-200"
+          style={{
+            backgroundImage: "url('/images/star.svg')",
+            top: `${scrollPosition * 95 + 2.5}%`,
+            transform: "translateY(-50%)",
+          }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const barElement = e.currentTarget.parentElement;
+            if (!barElement) return;
+
+            const handleMouseMove = (moveEvent: MouseEvent) => {
+              const rect = barElement.getBoundingClientRect();
+              const y = moveEvent.clientY - rect.top;
+              const ratio = y / rect.height;
+              const newPosition = Math.max(
+                0,
+                Math.min(1, (ratio - 0.025) / 0.95),
+              );
+              setScrollPosition(newPosition);
+            };
+
+            const handleMouseUp = () => {
+              document.removeEventListener("mousemove", handleMouseMove);
+              document.removeEventListener("mouseup", handleMouseUp);
+            };
+
+            document.addEventListener("mousemove", handleMouseMove);
+            document.addEventListener("mouseup", handleMouseUp);
+          }}
+        />
+      </div>
+      <RadixScrollArea.Root
+        className="
+      fixed left-0 top-0 z-10 
+      h-full w-full 
+      max-md:h-[100vw] max-md:w-[100vh]
+      "
+      >
+        <RadixScrollArea.Viewport
+          ref={viewportRef}
+          className="h-full w-full"
+          onWheel={(e) => {
+            const viewport = e.currentTarget;
+            viewport.scrollLeft += e.deltaY;
+            e.preventDefault();
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+        >
+          <div className="h-screen w-fit flex">
+            {pageType === "ArtBoard" ? (
+              <ArtBoard
+                imageList={allImages}
+                index={currentIndex}
+                changeIndex={setCurrentIndex}
+              />
+            ) : pageType === "Gallery" ? (
+              <Gallery
+                imageList={filteredImages}
+                onClickImage={setCurrentIndex}
+              />
+            ) : (
+              <div />
+            )}
+          </div>
+        </RadixScrollArea.Viewport>
+        <RadixScrollArea.Scrollbar orientation="horizontal" className="hidden">
+          <RadixScrollArea.Thumb />
+        </RadixScrollArea.Scrollbar>
+      </RadixScrollArea.Root>
     </div>
   );
 }
