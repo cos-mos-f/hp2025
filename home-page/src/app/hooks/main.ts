@@ -1,20 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import type { ImageItem } from "./images";
 
-export const useArtBoard = (
+export const useMain = (
   imageList: ImageItem[],
   index: number,
   changeIndex: (nextIndex: number) => void,
 ) => {
   const base = import.meta.env.BASE_URL;
-  const artFrameRef = useRef<HTMLDivElement | null>(null);
+  const mainFrameRef = useRef<HTMLDivElement | null>(null);
   const [frameSize, setFrameSize] = useState({ width: 0, height: 0 });
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [loadedMap, setLoadedMap] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const updateFrameSize = () => {
-      if (artFrameRef.current) {
-        const rect = artFrameRef.current.getBoundingClientRect();
+      if (mainFrameRef.current) {
+        const rect = mainFrameRef.current.getBoundingClientRect();
         setFrameSize({ width: rect.width, height: rect.height });
       }
     };
@@ -24,26 +24,23 @@ export const useArtBoard = (
     return () => window.removeEventListener("resize", updateFrameSize);
   }, []);
 
-  const scaledImageSize = useMemo(() => {
-    if (!frameSize.width || !frameSize.height) return { width: 0, height: 0 };
-
-    const { width, height } = imageList[index];
-    const widthRatio = frameSize.width / width;
-    const heightRatio = frameSize.height / height;
-    const scale = Math.min(widthRatio, heightRatio);
-
-    return {
-      width: Math.floor(width * scale),
-      height: Math.floor(height * scale),
-    };
-  }, [index, frameSize.width, frameSize.height, imageList]);
-
   useEffect(() => {
-    setIsImageLoaded(false);
-    const img = new Image();
-    img.src = `${base}images/artWorks/${imageList[index].filename}`;
-    img.onload = () => setIsImageLoaded(true);
-  }, [index, imageList, base]);
+    let canceled = false;
+    setLoadedMap({});
+
+    for (const image of imageList) {
+      const img = new Image();
+      img.src = `${base}images/artWorks/${image.filename}`;
+      img.onload = () => {
+        if (canceled) return;
+        setLoadedMap((prev) => ({ ...prev, [image.filename]: true }));
+      };
+    }
+
+    return () => {
+      canceled = true;
+    };
+  }, [imageList, base]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,7 +51,7 @@ export const useArtBoard = (
 
   const handleClick = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
-      const rect = artFrameRef.current?.getBoundingClientRect();
+      const rect = mainFrameRef.current?.getBoundingClientRect();
       if (!rect) return;
 
       const isHorizontal = rect.width >= rect.height;
@@ -72,10 +69,10 @@ export const useArtBoard = (
   );
 
   return {
-    artFrameRef,
+    mainFrameRef,
     base,
-    scaledImageSize,
-    isImageLoaded,
+    frameSize,
+    loadedMap,
     handleClick,
   };
 };

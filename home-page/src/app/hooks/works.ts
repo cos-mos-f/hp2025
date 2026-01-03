@@ -5,38 +5,38 @@ import {
   useRef,
   useState,
 } from "react";
-import type { ImageItemWithIndex } from "./images";
+import type { ImageItem } from "./images";
 
-export type GalleryLayoutImage = {
+export type WorksLayoutImage = {
   type: "image";
-  image: ImageItemWithIndex;
+  image: ImageItem;
   width: number;
   height: number;
 };
 
-export type GalleryLayoutGroup = {
+export type WorksLayoutGroup = {
   type: "group";
   direction: "column" | "row";
-  items: GalleryLayoutNode[];
+  items: WorksLayoutNode[];
 };
 
-export type GalleryLayoutNode = GalleryLayoutImage | GalleryLayoutGroup;
+export type WorksLayoutNode = WorksLayoutImage | WorksLayoutGroup;
 
-export const useGallery = (imageList: ImageItemWithIndex[]) => {
-  const galleryRef = useRef<HTMLDivElement>(null);
-  const [content, setContent] = useState<GalleryLayoutGroup[]>([]);
+export const useWorks = (imageList: ImageItem[]) => {
+  const worksRef = useRef<HTMLDivElement>(null);
+  const [content, setContent] = useState<WorksLayoutGroup[]>([]);
   const [isLoading] = useState(false);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
   const buildLayout = useCallback(() => {
-    const layout: GalleryLayoutGroup[] = [];
-    const galleryElement = galleryRef.current;
-    if (!galleryElement) return layout;
+    const layout: WorksLayoutGroup[] = [];
+    const worksElement = worksRef.current;
+    if (!worksElement) return layout;
 
     const { width, height } =
       containerSize.width > 0
         ? containerSize
-        : galleryElement.getBoundingClientRect();
+        : worksElement.getBoundingClientRect();
     const frame = Math.min(width, height);
     let i = 0;
     while (i < imageList.length) {
@@ -232,15 +232,15 @@ export const useGallery = (imageList: ImageItemWithIndex[]) => {
 
   // ResizeObserverでコンテナのサイズを監視
   useLayoutEffect(() => {
-    const galleryElement = galleryRef.current;
-    if (!galleryElement) return;
+    const worksElement = worksRef.current;
+    if (!worksElement) return;
 
     const resizeObserver = new ResizeObserver(() => {
-      const { width, height } = galleryElement.getBoundingClientRect();
+      const { width, height } = worksElement.getBoundingClientRect();
       setContainerSize({ width, height });
     });
 
-    resizeObserver.observe(galleryElement);
+    resizeObserver.observe(worksElement);
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -262,5 +262,5 @@ export const useGallery = (imageList: ImageItemWithIndex[]) => {
   //   return () => clearTimeout(timeout);
   // }, [imageList]);
 
-  return { galleryRef, content, isLoading };
+  return { worksRef, content, isLoading };
 };

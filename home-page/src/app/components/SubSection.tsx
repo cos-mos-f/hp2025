@@ -1,28 +1,28 @@
 import * as Tabs from "@radix-ui/react-tabs";
-import type { GalleryType } from "../hooks/images";
+import type { WorksType } from "../hooks/images";
 import type { PageType } from "../hooks/pageType";
 import LinkBox from "./LinkBox";
 
 type SubSectionProps = {
   pageType: PageType;
-  galleryType: GalleryType;
-  setGalleryType: (galleryType: GalleryType) => void;
+  worksType: WorksType;
+  setWorksType: (worksType: WorksType) => void;
 };
 
 const SubSection = ({
   pageType,
-  galleryType,
-  setGalleryType,
+  worksType,
+  setWorksType,
 }: SubSectionProps) => {
-  if (pageType === "ArtBoard") {
+  if (pageType === "Main") {
     return <div />;
   }
 
-  if (pageType === "Gallery") {
+  if (pageType === "Works") {
     return (
       <Tabs.Root
-        value={galleryType}
-        onValueChange={(value) => setGalleryType(value as GalleryType)}
+        value={worksType}
+        onValueChange={(value) => setWorksType(value as WorksType)}
         className="flex h-full flex-col items-start justify-end select-text"
       >
         <Tabs.List className="flex flex-col items-start gap-2">

@@ -1,22 +1,22 @@
-import type { ImageItemWithIndex } from "../hooks/images";
+import type { ImageItem } from "../hooks/images";
 import {
-  useGallery,
-  type GalleryLayoutGroup,
-  type GalleryLayoutNode,
-} from "../hooks/gallery";
+  useWorks,
+  type WorksLayoutGroup,
+  type WorksLayoutNode,
+} from "../hooks/works";
 import Loading from "./Loading";
 
-type GalleryProps = {
-  imageList: ImageItemWithIndex[];
-  onClickImage: (index: number) => void;
+type WorksProps = {
+  imageList: ImageItem[];
+  onClickImage: (filename: string) => void;
 };
 
-const Gallery = ({ imageList, onClickImage }: GalleryProps) => {
-  const { galleryRef, content, isLoading } = useGallery(imageList);
+const Works = ({ imageList, onClickImage }: WorksProps) => {
+  const { worksRef, content, isLoading } = useWorks(imageList);
 
   const base = import.meta.env.BASE_URL;
 
-  const renderNode = (node: GalleryLayoutNode, key: string) => {
+  const renderNode = (node: WorksLayoutNode, key: string) => {
     if (node.type === "image") {
       return (
         <img
@@ -26,7 +26,7 @@ const Gallery = ({ imageList, onClickImage }: GalleryProps) => {
           className="border border-black dark:border-white"
           style={{ width: `${node.width}px`, height: `${node.height}px` }}
           loading="lazy"
-          onClick={() => onClickImage(node.image.index)}
+          onClick={() => onClickImage(node.image.filename)}
         />
       );
     }
@@ -42,7 +42,7 @@ const Gallery = ({ imageList, onClickImage }: GalleryProps) => {
     );
   };
 
-  const renderGroup = (group: GalleryLayoutGroup, groupIndex: number) => {
+  const renderGroup = (group: WorksLayoutGroup, groupIndex: number) => {
     return (
       <div key={`group-${groupIndex}`} className="flex shrink-0 px-2.5">
         {renderNode(group, `group-${groupIndex}`)}
@@ -52,7 +52,7 @@ const Gallery = ({ imageList, onClickImage }: GalleryProps) => {
 
   return (
     <div
-      ref={galleryRef}
+      ref={worksRef}
       className="flex h-screen w-fit flex-row py-10 max-md:h-[100vw] "
     >
       <div className="h-full w-[40vw] shrink-0 max-md:w-[40vh] " />
@@ -67,4 +67,4 @@ const Gallery = ({ imageList, onClickImage }: GalleryProps) => {
   );
 };
 
-export default Gallery;
+export default Works;

@@ -1,40 +1,34 @@
 "use client";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import Loading from "./components/Loading";
-import ArtBoard from "./components/ArtBoard";
-import Gallery from "./components/Gallery";
+import Main from "./components/Main";
+import Works from "./components/Works";
 import MainSection from "./components/MainSection";
 import SubSection from "./components/SubSection";
+import CustomScrollbar from "./components/CustomScrollbar";
 import { usePageType } from "./hooks/pageType";
 import { useImages } from "./hooks/images";
 import { usePreloadImages } from "./hooks/preloadImages";
 import * as RadixScrollArea from "@radix-ui/react-scroll-area";
-import { useScroll } from "./hooks/scroll";
+import { useMainIndexQuery, useScroll } from "./hooks/scroll";
 
 export default function App() {
   const { pageType, setPageType } = usePageType();
-  const { allImages, filteredImages, galleryType, setGalleryType } =
-    useImages();
+  const {
+    allImages,
+    filteredImages,
+    worksType,
+    setWorksType,
+    getIndexByFilename,
+  } = useImages(pageType);
   const { isLoading } = usePreloadImages(allImages, 10);
   const { scrollPosition, setScrollPosition } = useScroll();
-  const [isBarHovered, setIsBarHovered] = useState(false);
-
-  const indexToScrollPosition = (index: number, total: number) => {
-    if (total <= 1) return 0;
-    return index / (total - 1);
-  };
-  const scrollPositionToIndex = (position: number, total: number) => {
-    if (total <= 1) return 0;
-    return Math.round(position * (total - 1));
-  };
 
   const total = filteredImages.length;
-  const currentIndex = scrollPositionToIndex(scrollPosition, total);
-
-  const setCurrentIndex = (index: number) => {
-    const position = indexToScrollPosition(index, total);
-    setScrollPosition(position);
-  };
+  const { mainIndex: currentIndex, setMainIndex } = useMainIndexQuery(
+    total,
+    pageType,
+  );
 
   const touchStartX = useRef(0);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -91,90 +85,14 @@ export default function App() {
         <MainSection pageType={pageType} setPageType={setPageType} />
         <SubSection
           pageType={pageType}
-          galleryType={galleryType}
-          setGalleryType={setGalleryType}
+          worksType={worksType}
+          setWorksType={setWorksType}
         />
       </div>
-      {/* Custom vertical scrollbar */}
-      <div
-        className="fixed left-5 top-10 bottom-10 z-1000 flex w-10 flex-col items-center justify-center max-md:w-8 cursor-pointer"
-        onMouseEnter={() => setIsBarHovered(true)}
-        onMouseLeave={() => setIsBarHovered(false)}
-        onClick={(e) => {
-          const barElement = e.currentTarget;
-          const rect = barElement.getBoundingClientRect();
-          const y = e.clientY - rect.top;
-          const ratio = y / rect.height;
-          const newPosition = Math.max(0, Math.min(1, (ratio - 0.025) / 0.95));
-          setScrollPosition(newPosition);
-        }}
-        onMouseDown={(e) => {
-          // バー全体でのドラッグ操作
-          if (
-            e.target === e.currentTarget ||
-            (e.target as HTMLElement).tagName === "DIV"
-          ) {
-            e.preventDefault();
-
-            const handleMouseMove = (moveEvent: MouseEvent) => {
-              const barElement = e.currentTarget;
-              const rect = barElement.getBoundingClientRect();
-              const y = moveEvent.clientY - rect.top;
-              const ratio = y / rect.height;
-              const newPosition = Math.max(
-                0,
-                Math.min(1, (ratio - 0.025) / 0.95),
-              );
-              setScrollPosition(newPosition);
-            };
-
-            const handleMouseUp = () => {
-              document.removeEventListener("mousemove", handleMouseMove);
-              document.removeEventListener("mouseup", handleMouseUp);
-            };
-
-            document.addEventListener("mousemove", handleMouseMove);
-            document.addEventListener("mouseup", handleMouseUp);
-          }
-        }}
-      >
-        <div
-          className={`h-full bg-black dark:bg-white transition-all ${isBarHovered ? "w-0.5" : "w-[0.5px]"}`}
-        />
-        <div
-          className="absolute w-[60px] h-[60px] bg-center bg-no-repeat bg-size-[60px_60px] cursor-pointer max-md:w-10 max-md:h-10 max-md:bg-size-[40px_40px] dark:invert dark:brightness-200"
-          style={{
-            backgroundImage: `url('${import.meta.env.BASE_URL}/images/star.svg')`,
-            top: `${scrollPosition * 95 + 2.5}%`,
-            transform: "translateY(-50%)",
-          }}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const barElement = e.currentTarget.parentElement;
-            if (!barElement) return;
-
-            const handleMouseMove = (moveEvent: MouseEvent) => {
-              const rect = barElement.getBoundingClientRect();
-              const y = moveEvent.clientY - rect.top;
-              const ratio = y / rect.height;
-              const newPosition = Math.max(
-                0,
-                Math.min(1, (ratio - 0.025) / 0.95),
-              );
-              setScrollPosition(newPosition);
-            };
-
-            const handleMouseUp = () => {
-              document.removeEventListener("mousemove", handleMouseMove);
-              document.removeEventListener("mouseup", handleMouseUp);
-            };
-
-            document.addEventListener("mousemove", handleMouseMove);
-            document.addEventListener("mouseup", handleMouseUp);
-          }}
-        />
-      </div>
+      <CustomScrollbar
+        scrollPosition={scrollPosition}
+        setScrollPosition={setScrollPosition}
+      />
       <RadixScrollArea.Root
         className="
       fixed left-0 top-0 z-10 
@@ -188,22 +106,25 @@ export default function App() {
           onWheel={(e) => {
             const viewport = e.currentTarget;
             viewport.scrollLeft += e.deltaY;
-            e.preventDefault();
+            // e.preventDefault();
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
         >
           <div className="h-screen w-fit flex">
-            {pageType === "ArtBoard" ? (
-              <ArtBoard
+            {pageType === "Main" ? (
+              <Main
                 imageList={allImages}
                 index={currentIndex}
-                changeIndex={setCurrentIndex}
+                changeIndex={setMainIndex}
               />
-            ) : pageType === "Gallery" ? (
-              <Gallery
+            ) : pageType === "Works" ? (
+              <Works
                 imageList={filteredImages}
-                onClickImage={setCurrentIndex}
+                onClickImage={(filename) => {
+                  setPageType("Main");
+                  setMainIndex(getIndexByFilename(filename));
+                }}
               />
             ) : (
               <div />
