@@ -20,13 +20,13 @@ export default function App() {
     galleryType,
     setGalleryType,
     getIndexByFilename,
-  } = useImages();
+  } = useImages(pageType);
   const { isLoading } = usePreloadImages(allImages, 10);
   const { scrollPosition, setScrollPosition } = useScroll();
 
   const total = filteredImages.length;
   const { artBoardIndex: currentIndex, setArtBoardIndex } =
-    useArtBoardIndexQuery(total);
+    useArtBoardIndexQuery(total, pageType);
 
   const touchStartX = useRef(0);
   const viewportRef = useRef<HTMLDivElement>(null);

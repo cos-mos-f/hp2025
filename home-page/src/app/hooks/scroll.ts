@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { useCallback, useEffect } from "react";
-import { usePageType } from "./pageType";
+import { usePageType, type PageType } from "./pageType";
 
 const galleryScrollPositionAtom = atom(0); // 0-1
 
@@ -54,7 +54,7 @@ export const useScroll = () => {
   };
 };
 
-export const useArtBoardIndexQuery = (total: number) => {
+export const useArtBoardIndexQuery = (total: number, pageType: PageType) => {
   const [artBoardScrollPosition, setArtBoardScrollPosition] = useAtom(
     artBoardScrollPositionAtom,
   );
@@ -71,6 +71,7 @@ export const useArtBoardIndexQuery = (total: number) => {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (total <= 0) return;
+    if (pageType !== "ArtBoard") return;
     const syncFromLocation = () => {
       const indexFromQuery = readIndexFromQuery();
       if (indexFromQuery === null) return;
@@ -80,10 +81,18 @@ export const useArtBoardIndexQuery = (total: number) => {
     syncFromLocation();
     window.addEventListener("popstate", syncFromLocation);
     return () => window.removeEventListener("popstate", syncFromLocation);
-  }, [setArtBoardScrollPosition, total]);
+  }, [pageType, setArtBoardScrollPosition, total]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (pageType !== "ArtBoard") {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("index")) {
+        url.searchParams.delete("index");
+        window.history.replaceState({}, "", url);
+      }
+      return;
+    }
     if (total <= 0) return;
     const nextIndex = scrollPositionToIndex(artBoardScrollPosition, total);
     const url = new URL(window.location.href);
@@ -92,7 +101,7 @@ export const useArtBoardIndexQuery = (total: number) => {
     if (currentIndex === nextIndexText) return;
     url.searchParams.set("index", nextIndexText);
     window.history.replaceState({}, "", url);
-  }, [artBoardScrollPosition, total]);
+  }, [artBoardScrollPosition, pageType, total]);
 
   return {
     artBoardIndex: scrollPositionToIndex(artBoardScrollPosition, total),

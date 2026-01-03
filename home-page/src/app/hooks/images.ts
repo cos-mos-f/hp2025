@@ -1,6 +1,7 @@
 import imageListData from "../imageList.json";
 import { atom, useAtom } from "jotai";
 import { useEffect } from "react";
+import type { PageType } from "./pageType";
 
 export type ImageItem = {
   filename: string;
@@ -32,12 +33,13 @@ const readGalleryTypeFromQuery = (): GalleryType | null => {
   return null;
 };
 
-export const useImages = () => {
+export const useImages = (pageType: PageType) => {
   const [galleryType, setGalleryType] = useAtom(galleryTypeAtom);
 
   // URLクエリパラメータからgalleryTypeを同期
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (pageType !== "Gallery") return;
     const syncFromLocation = () => {
       const galleryTypeFromQuery = readGalleryTypeFromQuery();
       if (galleryTypeFromQuery !== null) {
@@ -47,17 +49,25 @@ export const useImages = () => {
     syncFromLocation();
     window.addEventListener("popstate", syncFromLocation);
     return () => window.removeEventListener("popstate", syncFromLocation);
-  }, [setGalleryType]);
+  }, [pageType, setGalleryType]);
 
   // galleryTypeが変更されたらURLを更新
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (pageType !== "Gallery") {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("galleryType")) {
+        url.searchParams.delete("galleryType");
+        window.history.replaceState({}, "", url);
+      }
+      return;
+    }
     const url = new URL(window.location.href);
     const currentGalleryType = url.searchParams.get("galleryType");
     if (currentGalleryType === galleryType) return;
     url.searchParams.set("galleryType", galleryType);
     window.history.replaceState({}, "", url);
-  }, [galleryType]);
+  }, [galleryType, pageType]);
 
   const allImages = imageList;
   const filteredImages = allImages
