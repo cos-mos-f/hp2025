@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <script>
+            // GitHub Pages SPA redirect
+            // パスとクエリパラメータを特殊なクエリパラメータとしてindex.htmlに渡す
+            (function () {
+                var path = location.pathname + location.search + location.hash;
+                var redirect = "/?redirect=" + encodeURIComponent(path);
+                location.replace(redirect);
+            })();
+        </script>
+    </head>
+    <body></body>
+</html>
