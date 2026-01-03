@@ -3,8 +3,6 @@ import { useEffect } from "react";
 
 export type PageType = "Main" | "Works" | "Contact";
 
-const pageTypeAtom = atom<PageType>("Main");
-
 const getBasePath = () => {
   const base = import.meta.env.BASE_URL || "/";
   if (!base.startsWith("/")) return `/${base.endsWith("/") ? base : `${base}/`}`;
@@ -29,6 +27,13 @@ const pathToPageType = (path: string): PageType => {
   if (segment === "contact") return "Contact";
   return "Main";
 };
+
+const getInitialPageType = (): PageType => {
+  if (typeof window === "undefined") return "Main";
+  return pathToPageType(getRelativePath());
+};
+
+const pageTypeAtom = atom<PageType>(getInitialPageType());
 
 const pageTypeToPath = (pageType: PageType) => {
   if (pageType === "Works") return "works";

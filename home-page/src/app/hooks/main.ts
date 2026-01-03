@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ImageItem } from "./images";
 
 export const useMain = (
@@ -45,34 +45,14 @@ export const useMain = (
   useEffect(() => {
     const interval = setInterval(() => {
       changeIndex((index + 1) % imageList.length);
-    }, 4500);
+    }, 3500);
     return () => clearInterval(interval);
   }, [index, changeIndex, imageList.length]);
-
-  const handleClick = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      const rect = mainFrameRef.current?.getBoundingClientRect();
-      if (!rect) return;
-
-      const isHorizontal = rect.width >= rect.height;
-      const isNext = isHorizontal
-        ? event.clientX > rect.left + rect.width / 2
-        : event.clientY > rect.top + rect.height / 2;
-
-      changeIndex(
-        isNext
-          ? (index + 1) % imageList.length
-          : (index - 1 + imageList.length) % imageList.length,
-      );
-    },
-    [changeIndex, imageList.length, index],
-  );
 
   return {
     mainFrameRef,
     base,
     frameSize,
     loadedMap,
-    handleClick,
   };
 };

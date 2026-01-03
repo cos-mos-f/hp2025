@@ -1,6 +1,7 @@
 import { atom, useAtom } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { usePageType, type PageType } from "./pageType";
+import { useWorksType } from "./images";
 
 const worksScrollPositionAtom = atom(0); // 0-1
 
@@ -33,6 +34,14 @@ const readIndexFromQuery = () => {
 
 export const useScroll = () => {
   const { pageType } = usePageType();
+  const { worksType } = useWorksType();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (pageType !== "Works") return;
+    setWorksScrollPosition(0);
+  }, [worksType]);
+
   const [worksScrollPosition, setWorksScrollPosition] = useAtom(
     worksScrollPositionAtom,
   );
@@ -56,6 +65,7 @@ export const useMainIndexQuery = (total: number, pageType: PageType) => {
   const [mainScrollPosition, setMainScrollPosition] = useAtom(
     mainScrollPositionAtom,
   );
+  const hasSyncedFromQuery = useRef(false);
 
   const setMainIndex = useCallback(
     (nextIndex: number) => {
@@ -83,6 +93,22 @@ export const useMainIndexQuery = (total: number, pageType: PageType) => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (total <= 0) return;
+    const nextIndex = scrollPositionToIndex(mainScrollPosition, total);
+    if (!hasSyncedFromQuery.current) {
+      const url = new URL(window.location.href);
+      const currentIndex = url.searchParams.get("mainIndex");
+      if (currentIndex === null) {
+        hasSyncedFromQuery.current = true;
+      } else {
+        const parsedIndex = Number.parseInt(currentIndex, 10);
+        if (!Number.isNaN(parsedIndex) && parsedIndex === nextIndex) {
+          hasSyncedFromQuery.current = true;
+        } else {
+          return;
+        }
+      }
+    }
     if (pageType !== "Main") {
       const url = new URL(window.location.href);
       if (url.searchParams.has("mainIndex")) {
@@ -91,8 +117,6 @@ export const useMainIndexQuery = (total: number, pageType: PageType) => {
       }
       return;
     }
-    if (total <= 0) return;
-    const nextIndex = scrollPositionToIndex(mainScrollPosition, total);
     const url = new URL(window.location.href);
     const currentIndex = url.searchParams.get("mainIndex");
     const nextIndexText = String(nextIndex);

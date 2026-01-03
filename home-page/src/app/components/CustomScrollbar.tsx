@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 type CustomScrollbarProps = {
   scrollPosition: number;
   setScrollPosition: (position: number) => void;
+  onWheelDelta?: (deltaRatio: number) => void;
 };
 
 const TRACK_PADDING_RATIO = 0.025;
@@ -13,6 +14,7 @@ const TRACK_RANGE_RATIO = 0.95;
 export default function CustomScrollbar({
   scrollPosition,
   setScrollPosition,
+  onWheelDelta,
 }: CustomScrollbarProps) {
   const [isBarHovered, setIsBarHovered] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
@@ -92,13 +94,23 @@ export default function CustomScrollbar({
         if (!barElement) return;
         const { height } = barElement.getBoundingClientRect();
         if (height <= 0) return;
-        const deltaRatio = e.deltaY / height;
-        const nextPosition = Math.max(
-          0,
-          Math.min(1, scrollPosition + deltaRatio),
-        );
-        setScrollPosition(nextPosition);
-        e.preventDefault();
+        let delta = e.deltaY;
+        if (e.deltaMode === 1) {
+          delta *= 16;
+        } else if (e.deltaMode === 2) {
+          delta *= height;
+        }
+        const deltaRatio = delta / height;
+        if (onWheelDelta) {
+          onWheelDelta(deltaRatio);
+        } else {
+          const nextPosition = Math.max(
+            0,
+            Math.min(1, scrollPosition + deltaRatio),
+          );
+          setScrollPosition(nextPosition);
+        }
+        e.stopPropagation();
       }}
       onMouseDown={(e) => {
         if (
@@ -122,10 +134,10 @@ export default function CustomScrollbar({
       }}
     >
       <div
-        className={`h-full bg-black dark:bg-white transition-all ${isBarHovered ? "w-0.5" : "w-[0.5px]"}`}
+        className={`h-full bg-black transition-all ${isBarHovered ? "w-0.5" : "w-[0.5px]"}`}
       />
       <div
-        className="absolute w-[60px] h-[60px] bg-center bg-no-repeat cursor-pointer max-md:w-10 max-md:h-10 dark:invert dark:brightness-200"
+        className="absolute w-[60px] h-[60px] bg-center bg-no-repeat cursor-pointer max-md:w-10 max-md:h-10"
         style={{
           backgroundImage: `url('${import.meta.env.BASE_URL}images/star.svg')`,
           backgroundSize: "60px 60px",

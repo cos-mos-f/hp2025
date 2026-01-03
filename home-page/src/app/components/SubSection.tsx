@@ -29,25 +29,25 @@ const SubSection = ({ pageType, worksType, setWorksType }: SubSectionProps) => {
         <Tabs.List className="flex flex-col items-start gap-2">
           <Tabs.Trigger
             value="All"
-            className="relative inline-block transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
+            className="pointer-events-auto relative inline-block transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
           >
             all
           </Tabs.Trigger>
           <Tabs.Trigger
             value="FanArt"
-            className="relative inline-block transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
+            className="pointer-events-auto relative inline-block transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
           >
             fan art
           </Tabs.Trigger>
           <Tabs.Trigger
             value="Original"
-            className="relative inline-block transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
+            className="pointer-events-auto relative inline-block transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
           >
             original
           </Tabs.Trigger>
           <Tabs.Trigger
             value="Work"
-            className="relative inline-block transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
+            className="pointer-events-auto relative inline-block transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
           >
             work
           </Tabs.Trigger>
