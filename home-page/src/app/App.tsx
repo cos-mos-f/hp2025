@@ -34,12 +34,18 @@ export default function App() {
   const viewportRef = useRef<HTMLDivElement>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+    const isMobile = window.innerWidth <= 768;
+    touchStartX.current = isMobile
+      ? e.touches[0].clientY
+      : e.touches[0].clientX;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     const viewport = e.currentTarget;
-    const touchCurrentX = e.touches[0].clientX;
+    const isMobile = window.innerWidth <= 768;
+    const touchCurrentX = isMobile
+      ? e.touches[0].clientY
+      : e.touches[0].clientX;
     const deltaX = touchStartX.current - touchCurrentX;
     viewport.scrollLeft += deltaX;
     touchStartX.current = touchCurrentX;

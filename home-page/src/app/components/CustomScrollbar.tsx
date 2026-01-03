@@ -17,10 +17,25 @@ export default function CustomScrollbar({
   const [isBarHovered, setIsBarHovered] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
 
+  // スマホ判定（max-width: 768px）- メディアクエリを直接チェック
+  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+
   const positionFromClientY = (clientY: number) => {
     const barElement = barRef.current;
     if (!barElement) return 0;
     const rect = barElement.getBoundingClientRect();
+
+    // モバイルの場合は横方向で計算（90度回転しているため）
+    if (isMobile()) {
+      const x = rect.right - clientY; // 右端からの距離（左右反転）
+      const ratio = x / rect.width;
+      return Math.max(
+        0,
+        Math.min(1, (ratio - TRACK_PADDING_RATIO) / TRACK_RANGE_RATIO),
+      );
+    }
+
+    // 通常は縦方向で計算
     const y = clientY - rect.top;
     const ratio = y / rect.height;
     return Math.max(
@@ -29,30 +44,47 @@ export default function CustomScrollbar({
     );
   };
 
-  const handleDrag = (moveEvent: MouseEvent) => {
-    const newPosition = positionFromClientY(moveEvent.clientY);
+  const handleDrag = (moveEvent: MouseEvent | TouchEvent) => {
+    let clientY: number;
+    if ("touches" in moveEvent) {
+      // スマホの場合はclientXを使用（90度回転しているため）
+      clientY = isMobile()
+        ? moveEvent.touches[0].clientX
+        : moveEvent.touches[0].clientY;
+    } else {
+      clientY = moveEvent.clientY;
+    }
+    const newPosition = positionFromClientY(clientY);
     setScrollPosition(newPosition);
   };
 
   const stopDrag = () => {
-    document.removeEventListener("mousemove", handleDrag);
+    document.removeEventListener("mousemove", handleDrag as EventListener);
     document.removeEventListener("mouseup", stopDrag);
+    document.removeEventListener("touchmove", handleDrag as EventListener);
+    document.removeEventListener("touchend", stopDrag);
   };
 
   const startDrag = (clientY: number) => {
     setScrollPosition(positionFromClientY(clientY));
-    document.addEventListener("mousemove", handleDrag);
+    document.addEventListener("mousemove", handleDrag as EventListener);
     document.addEventListener("mouseup", stopDrag);
+    document.addEventListener("touchmove", handleDrag as EventListener, {
+      passive: false,
+    });
+    document.addEventListener("touchend", stopDrag);
   };
 
   return (
     <div
       ref={barRef}
       className="fixed left-5 top-10 bottom-10 z-1000 flex w-10 flex-col items-center justify-center max-md:w-8 cursor-pointer"
+      style={{ touchAction: "none" }}
       onMouseEnter={() => setIsBarHovered(true)}
       onMouseLeave={() => setIsBarHovered(false)}
       onClick={(e) => {
-        const newPosition = positionFromClientY(e.clientY);
+        const clientY = isMobile() ? e.clientX : e.clientY;
+        const newPosition = positionFromClientY(clientY);
         setScrollPosition(newPosition);
       }}
       onWheel={(e) => {
@@ -77,6 +109,17 @@ export default function CustomScrollbar({
           startDrag(e.clientY);
         }
       }}
+      onTouchStart={(e) => {
+        if (
+          e.target === e.currentTarget ||
+          (e.target as HTMLElement).tagName === "DIV"
+        ) {
+          const clientY = isMobile()
+            ? e.touches[0].clientX
+            : e.touches[0].clientY;
+          startDrag(clientY);
+        }
+      }}
     >
       <div
         className={`h-full bg-black dark:bg-white transition-all ${isBarHovered ? "w-0.5" : "w-[0.5px]"}`}
@@ -93,6 +136,12 @@ export default function CustomScrollbar({
           e.preventDefault();
           e.stopPropagation();
           startDrag(e.clientY);
+        }}
+        onTouchStart={(e) => {
+          const clientY = isMobile()
+            ? e.touches[0].clientX
+            : e.touches[0].clientY;
+          startDrag(clientY);
         }}
       />
     </div>

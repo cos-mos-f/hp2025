@@ -75,25 +75,6 @@
         />
         <!-- BASE_URL 対応のため相対パス指定 -->
         <meta name="twitter:image" content="metaImage.jpg" />
-
-        <!-- GitHub Pages SPA redirect script -->
-        <script>
-            (function () {
-                var params = new URLSearchParams(location.search);
-                var redirect = params.get("redirect");
-                if (redirect) {
-                    // redirectパラメータを削除してクリーンなURLを構築
-                    params.delete("redirect");
-                    var cleanSearch = params.toString();
-                    var newUrl = location.origin + redirect;
-                    // 元のURLにクエリパラメータがない場合、redirectパラメータ以外があれば追加
-                    if (!redirect.includes("?") && cleanSearch) {
-                        newUrl += "?" + cleanSearch;
-                    }
-                    history.replaceState(null, null, newUrl);
-                }
-            })();
-        </script>
     </head>
     <body class="antialiased">
         <div id="root"></div>

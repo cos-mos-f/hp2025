@@ -32,8 +32,17 @@ jobs:
         working-directory: home-page
         env:
           NODE_ENV: production
-      - name: Add .nojekyll
-        run: touch home-page/dist/.nojekyll
+      - name: Setup SPA routing
+        run: |
+          touch home-page/dist/.nojekyll
+          # 各ルート用のディレクトリとindex.htmlを作成
+          mkdir -p home-page/dist/works
+          mkdir -p home-page/dist/contact
+          mkdir -p home-page/dist/main
+          # メインのindex.htmlを各ルートにコピー
+          cp home-page/dist/index.html home-page/dist/works/index.html
+          cp home-page/dist/index.html home-page/dist/contact/index.html
+          cp home-page/dist/index.html home-page/dist/main/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           # Path must be relative to the repository root
