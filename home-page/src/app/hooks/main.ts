@@ -54,10 +54,10 @@ export const useMain = (
       const rect = mainFrameRef.current?.getBoundingClientRect();
       if (!rect) return;
 
-      const isHorizontal = rect.width >= rect.height;
-      const isNext = isHorizontal
-        ? event.clientX > rect.left + rect.width / 2
-        : event.clientY > rect.top + rect.height / 2;
+      const isMobile = window.innerWidth <= 768;
+      const isNext = isMobile
+        ? event.clientY > rect.top + rect.height / 2
+        : event.clientX > rect.left + rect.width / 2;
 
       changeIndex(
         isNext
