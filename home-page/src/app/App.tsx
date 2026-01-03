@@ -49,6 +49,12 @@ export default function App() {
     const deltaX = touchStartX.current - touchCurrentX;
     viewport.scrollLeft += deltaX;
     touchStartX.current = touchCurrentX;
+    const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    if (maxScroll > 0) {
+      setScrollPosition(viewport.scrollLeft / maxScroll);
+    } else {
+      setScrollPosition(0);
+    }
   };
 
   // Sync scrollPosition with viewport scroll
@@ -112,7 +118,15 @@ export default function App() {
           onWheel={(e) => {
             const viewport = e.currentTarget;
             viewport.scrollLeft += e.deltaY;
-            // e.preventDefault();
+            const maxScroll = Math.max(
+              0,
+              viewport.scrollWidth - viewport.clientWidth,
+            );
+            if (maxScroll > 0) {
+              setScrollPosition(viewport.scrollLeft / maxScroll);
+            } else {
+              setScrollPosition(0);
+            }
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
