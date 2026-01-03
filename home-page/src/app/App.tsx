@@ -142,9 +142,10 @@ export default function App() {
           className={`h-full bg-black dark:bg-white transition-all ${isBarHovered ? "w-0.5" : "w-[0.5px]"}`}
         />
         <div
-          className="absolute w-[60px] h-[60px] bg-center bg-no-repeat bg-size-[60px_60px] cursor-pointer max-md:w-10 max-md:h-10 max-md:bg-size-[40px_40px] dark:invert dark:brightness-200"
+          className="absolute w-[60px] h-[60px] bg-center bg-no-repeat cursor-pointer max-md:w-10 max-md:h-10 dark:invert dark:brightness-200"
           style={{
-            backgroundImage: `url('${import.meta.env.BASE_URL}/images/star.svg')`,
+            backgroundImage: `url('${import.meta.env.BASE_URL}images/star.svg')`,
+            backgroundSize: "60px 60px",
             top: `${scrollPosition * 95 + 2.5}%`,
             transform: "translateY(-50%)",
           }}
