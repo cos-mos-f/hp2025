@@ -2,9 +2,9 @@ import { atom, useAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 import { usePageType, type PageType } from "./pageType";
 
-const galleryScrollPositionAtom = atom(0); // 0-1
+const worksScrollPositionAtom = atom(0); // 0-1
 
-const artBoardScrollPositionAtom = atom(0); // 0-1
+const mainScrollPositionAtom = atom(0); // 0-1
 
 export const indexToScrollPosition = (index: number, total: number) => {
   if (total <= 1) return 0;
@@ -24,7 +24,7 @@ const clampIndex = (index: number, total: number) => {
 const readIndexFromQuery = () => {
   if (typeof window === "undefined") return null;
   const url = new URL(window.location.href);
-  const raw = url.searchParams.get("index");
+  const raw = url.searchParams.get("mainIndex");
   if (raw === null) return null;
   const parsed = Number.parseInt(raw, 10);
   if (Number.isNaN(parsed)) return null;
@@ -33,78 +33,76 @@ const readIndexFromQuery = () => {
 
 export const useScroll = () => {
   const { pageType } = usePageType();
-  const [galleryScrollPosition, setGalleryScrollPosition] = useAtom(
-    galleryScrollPositionAtom,
+  const [worksScrollPosition, setWorksScrollPosition] = useAtom(
+    worksScrollPositionAtom,
   );
-  const [artBoardScrollPosition, setArtBoardScrollPosition] = useAtom(
-    artBoardScrollPositionAtom,
+  const [mainScrollPosition, setMainScrollPosition] = useAtom(
+    mainScrollPositionAtom,
   );
 
   const scrollPosition =
-    pageType === "Gallery" ? galleryScrollPosition : artBoardScrollPosition;
+    pageType === "Works" ? worksScrollPosition : mainScrollPosition;
   const setScrollPosition =
-    pageType === "Gallery"
-      ? setGalleryScrollPosition
-      : setArtBoardScrollPosition;
+    pageType === "Works" ? setWorksScrollPosition : setMainScrollPosition;
   return {
     scrollPosition,
     setScrollPosition,
-    setGalleryScrollPosition,
-    setArtBoardScrollPosition,
+    setWorksScrollPosition,
+    setMainScrollPosition,
   };
 };
 
-export const useArtBoardIndexQuery = (total: number, pageType: PageType) => {
-  const [artBoardScrollPosition, setArtBoardScrollPosition] = useAtom(
-    artBoardScrollPositionAtom,
+export const useMainIndexQuery = (total: number, pageType: PageType) => {
+  const [mainScrollPosition, setMainScrollPosition] = useAtom(
+    mainScrollPositionAtom,
   );
 
-  const setArtBoardIndex = useCallback(
+  const setMainIndex = useCallback(
     (nextIndex: number) => {
       if (total <= 0) return;
       const clampedIndex = clampIndex(nextIndex, total);
-      setArtBoardScrollPosition(indexToScrollPosition(clampedIndex, total));
+      setMainScrollPosition(indexToScrollPosition(clampedIndex, total));
     },
-    [setArtBoardScrollPosition, total],
+    [setMainScrollPosition, total],
   );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (total <= 0) return;
-    if (pageType !== "ArtBoard") return;
+    if (pageType !== "Main") return;
     const syncFromLocation = () => {
       const indexFromQuery = readIndexFromQuery();
       if (indexFromQuery === null) return;
       const clampedIndex = clampIndex(indexFromQuery, total);
-      setArtBoardScrollPosition(indexToScrollPosition(clampedIndex, total));
+      setMainScrollPosition(indexToScrollPosition(clampedIndex, total));
     };
     syncFromLocation();
     window.addEventListener("popstate", syncFromLocation);
     return () => window.removeEventListener("popstate", syncFromLocation);
-  }, [pageType, setArtBoardScrollPosition, total]);
+  }, [pageType, setMainScrollPosition, total]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (pageType !== "ArtBoard") {
+    if (pageType !== "Main") {
       const url = new URL(window.location.href);
-      if (url.searchParams.has("index")) {
-        url.searchParams.delete("index");
+      if (url.searchParams.has("mainIndex")) {
+        url.searchParams.delete("mainIndex");
         window.history.replaceState({}, "", url);
       }
       return;
     }
     if (total <= 0) return;
-    const nextIndex = scrollPositionToIndex(artBoardScrollPosition, total);
+    const nextIndex = scrollPositionToIndex(mainScrollPosition, total);
     const url = new URL(window.location.href);
-    const currentIndex = url.searchParams.get("index");
+    const currentIndex = url.searchParams.get("mainIndex");
     const nextIndexText = String(nextIndex);
     if (currentIndex === nextIndexText) return;
-    url.searchParams.set("index", nextIndexText);
+    url.searchParams.set("mainIndex", nextIndexText);
     window.history.replaceState({}, "", url);
-  }, [artBoardScrollPosition, pageType, total]);
+  }, [mainScrollPosition, pageType, total]);
 
   return {
-    artBoardIndex: scrollPositionToIndex(artBoardScrollPosition, total),
-    setArtBoardIndex,
+    mainIndex: scrollPositionToIndex(mainScrollPosition, total),
+    setMainIndex,
   };
 };

@@ -4,8 +4,8 @@ app
  ┃ ┃ ┣ artBox.tsx
  ┃ ┃ ┣ line.tsx
  ┃ ┃ ┗ lineText.tsx
- ┃ ┣ artBoard.tsx
- ┃ ┣ gallery.tsx
+┃ ┣ Main.tsx
+┃ ┣ Works.tsx
  ┃ ┣ horizonalBlock.tsx
  ┃ ┣ lineTextFrame.tsx
  ┃ ┣ mainSection.tsx

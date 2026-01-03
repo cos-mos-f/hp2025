@@ -1,8 +1,8 @@
 "use client";
 import { useRef, useEffect } from "react";
 import Loading from "./components/Loading";
-import ArtBoard from "./components/ArtBoard";
-import Gallery from "./components/Gallery";
+import Main from "./components/Main";
+import Works from "./components/Works";
 import MainSection from "./components/MainSection";
 import SubSection from "./components/SubSection";
 import CustomScrollbar from "./components/CustomScrollbar";
@@ -10,23 +10,25 @@ import { usePageType } from "./hooks/pageType";
 import { useImages } from "./hooks/images";
 import { usePreloadImages } from "./hooks/preloadImages";
 import * as RadixScrollArea from "@radix-ui/react-scroll-area";
-import { useArtBoardIndexQuery, useScroll } from "./hooks/scroll";
+import { useMainIndexQuery, useScroll } from "./hooks/scroll";
 
 export default function App() {
   const { pageType, setPageType } = usePageType();
   const {
     allImages,
     filteredImages,
-    galleryType,
-    setGalleryType,
+    worksType,
+    setWorksType,
     getIndexByFilename,
   } = useImages(pageType);
   const { isLoading } = usePreloadImages(allImages, 10);
   const { scrollPosition, setScrollPosition } = useScroll();
 
   const total = filteredImages.length;
-  const { artBoardIndex: currentIndex, setArtBoardIndex } =
-    useArtBoardIndexQuery(total, pageType);
+  const { mainIndex: currentIndex, setMainIndex } = useMainIndexQuery(
+    total,
+    pageType,
+  );
 
   const touchStartX = useRef(0);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -83,8 +85,8 @@ export default function App() {
         <MainSection pageType={pageType} setPageType={setPageType} />
         <SubSection
           pageType={pageType}
-          galleryType={galleryType}
-          setGalleryType={setGalleryType}
+          worksType={worksType}
+          setWorksType={setWorksType}
         />
       </div>
       <CustomScrollbar
@@ -110,18 +112,18 @@ export default function App() {
           onTouchMove={handleTouchMove}
         >
           <div className="h-screen w-fit flex">
-            {pageType === "ArtBoard" ? (
-              <ArtBoard
+            {pageType === "Main" ? (
+              <Main
                 imageList={allImages}
                 index={currentIndex}
-                changeIndex={setArtBoardIndex}
+                changeIndex={setMainIndex}
               />
-            ) : pageType === "Gallery" ? (
-              <Gallery
+            ) : pageType === "Works" ? (
+              <Works
                 imageList={filteredImages}
                 onClickImage={(filename) => {
-                  setPageType("ArtBoard");
-                  setArtBoardIndex(getIndexByFilename(filename));
+                  setPageType("Main");
+                  setMainIndex(getIndexByFilename(filename));
                 }}
               />
             ) : (

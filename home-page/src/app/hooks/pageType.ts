@@ -1,9 +1,9 @@
 import { atom, useAtom } from "jotai";
 import { useEffect } from "react";
 
-export type PageType = "ArtBoard" | "Gallery" | "Contact";
+export type PageType = "Main" | "Works" | "Contact";
 
-const pageTypeAtom = atom<PageType>("ArtBoard");
+const pageTypeAtom = atom<PageType>("Main");
 
 const getBasePath = () => {
   const base = import.meta.env.BASE_URL || "/";
@@ -24,16 +24,16 @@ const getRelativePath = () => {
 
 const pathToPageType = (path: string): PageType => {
   const segment = path.split("/")[0]?.toLowerCase();
-  if (!segment || segment === "artboard") return "ArtBoard";
-  if (segment === "gallery") return "Gallery";
+  if (!segment || segment === "main") return "Main";
+  if (segment === "works") return "Works";
   if (segment === "contact") return "Contact";
-  return "ArtBoard";
+  return "Main";
 };
 
 const pageTypeToPath = (pageType: PageType) => {
-  if (pageType === "Gallery") return "gallery";
+  if (pageType === "Works") return "works";
   if (pageType === "Contact") return "contact";
-  return "";
+  return "main";
 };
 
 const buildPathname = (pageType: PageType) => {

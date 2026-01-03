@@ -8,7 +8,7 @@ type MainSectionProps = {
 };
 
 const MainSection = ({ pageType, setPageType }: MainSectionProps) => {
-  const isGallery = pageType === "Gallery";
+  const isWorks = pageType === "Works";
   const isContact = pageType === "Contact";
 
   return (
@@ -19,7 +19,7 @@ const MainSection = ({ pageType, setPageType }: MainSectionProps) => {
     >
       <Tabs.List className="flex w-full flex-col items-start">
         <Tabs.Trigger
-          value="ArtBoard"
+          value="Main"
           className="origin-left scale-x-[1.5] pb-8 text-left text-[28pt] font-100 leading-[32pt] tracking-[-2px] transition-opacity hover:opacity-80 data-[state=active]:opacity-100 max-md:text-[20pt]"
         >
           cosmos
@@ -28,12 +28,12 @@ const MainSection = ({ pageType, setPageType }: MainSectionProps) => {
         </Tabs.Trigger>
         <div className="flex w-full items-end">
           <Tabs.Trigger
-            value="Gallery"
+            value="Works"
             className="relative inline-block text-left transition-opacity after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-100 hover:opacity-80 hover:after:scale-x-100 data-[state=active]:opacity-100 data-[state=active]:after:scale-x-100"
           >
             works
           </Tabs.Trigger>
-          <Line isActive={isGallery} />
+          <Line isActive={isWorks} />
         </div>
         <div className="flex w-full items-end">
           <Tabs.Trigger

@@ -11,16 +11,16 @@ export type ImageItem = {
   tag: string;
 };
 
-export type GalleryType = "All" | "FanArt" | "Original" | "Work";
+export type WorksType = "All" | "FanArt" | "Original" | "Work";
 
-const galleryTypeAtom = atom<GalleryType>("All");
+const worksTypeAtom = atom<WorksType>("All");
 
 const imageList = imageListData as ImageItem[];
 
-const readGalleryTypeFromQuery = (): GalleryType | null => {
+const readWorksTypeFromQuery = (): WorksType | null => {
   if (typeof window === "undefined") return null;
   const url = new URL(window.location.href);
-  const raw = url.searchParams.get("galleryType");
+  const raw = url.searchParams.get("worksType");
   if (raw === null) return null;
   if (
     raw === "All" ||
@@ -34,50 +34,50 @@ const readGalleryTypeFromQuery = (): GalleryType | null => {
 };
 
 export const useImages = (pageType: PageType) => {
-  const [galleryType, setGalleryType] = useAtom(galleryTypeAtom);
+  const [worksType, setWorksType] = useAtom(worksTypeAtom);
 
-  // URLクエリパラメータからgalleryTypeを同期
+  // URLクエリパラメータからworksTypeを同期
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (pageType !== "Gallery") return;
+    if (pageType !== "Works") return;
     const syncFromLocation = () => {
-      const galleryTypeFromQuery = readGalleryTypeFromQuery();
-      if (galleryTypeFromQuery !== null) {
-        setGalleryType(galleryTypeFromQuery);
+      const worksTypeFromQuery = readWorksTypeFromQuery();
+      if (worksTypeFromQuery !== null) {
+        setWorksType(worksTypeFromQuery);
       }
     };
     syncFromLocation();
     window.addEventListener("popstate", syncFromLocation);
     return () => window.removeEventListener("popstate", syncFromLocation);
-  }, [pageType, setGalleryType]);
+  }, [pageType, setWorksType]);
 
-  // galleryTypeが変更されたらURLを更新
+  // worksTypeが変更されたらURLを更新
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (pageType !== "Gallery") {
+    if (pageType !== "Works") {
       const url = new URL(window.location.href);
-      if (url.searchParams.has("galleryType")) {
-        url.searchParams.delete("galleryType");
+      if (url.searchParams.has("worksType")) {
+        url.searchParams.delete("worksType");
         window.history.replaceState({}, "", url);
       }
       return;
     }
     const url = new URL(window.location.href);
-    const currentGalleryType = url.searchParams.get("galleryType");
-    if (currentGalleryType === galleryType) return;
-    url.searchParams.set("galleryType", galleryType);
+    const currentWorksType = url.searchParams.get("worksType");
+    if (currentWorksType === worksType) return;
+    url.searchParams.set("worksType", worksType);
     window.history.replaceState({}, "", url);
-  }, [galleryType, pageType]);
+  }, [worksType, pageType]);
 
   const allImages = imageList;
   const filteredImages = allImages
     .map((image, index) => ({ ...image, index }))
     .filter((image) => {
-      if (galleryType === "All") return true;
+      if (worksType === "All") return true;
       return (
-        (galleryType === "FanArt" && image.tag.includes("f")) ||
-        (galleryType === "Original" && image.tag.includes("o")) ||
-        (galleryType === "Work" && image.tag.includes("w"))
+        (worksType === "FanArt" && image.tag.includes("f")) ||
+        (worksType === "Original" && image.tag.includes("o")) ||
+        (worksType === "Work" && image.tag.includes("w"))
       );
     });
 
@@ -86,8 +86,8 @@ export const useImages = (pageType: PageType) => {
     return image ? image.index : -1;
   };
   return {
-    galleryType,
-    setGalleryType,
+    worksType,
+    setWorksType,
     allImages,
     filteredImages,
     getIndexByFilename,

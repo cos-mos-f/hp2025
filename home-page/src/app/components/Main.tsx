@@ -1,14 +1,14 @@
-import { useArtBoard } from "../hooks/artBoard";
+import { useMain } from "../hooks/main";
 import type { ImageItem } from "../hooks/images";
 
-type ArtBoardProps = {
+type MainProps = {
   imageList: ImageItem[];
   index: number;
   changeIndex: (index: number) => void;
 };
 
-const ArtBoard = ({ imageList, index, changeIndex }: ArtBoardProps) => {
-  const { artFrameRef, base, frameSize, loadedMap, handleClick } = useArtBoard(
+const Main = ({ imageList, index, changeIndex }: MainProps) => {
+  const { mainFrameRef, base, frameSize, loadedMap, handleClick } = useMain(
     imageList,
     index,
     changeIndex,
@@ -35,7 +35,7 @@ const ArtBoard = ({ imageList, index, changeIndex }: ArtBoardProps) => {
         {activeImage.title}
       </div>
       <div
-        ref={artFrameRef}
+        ref={mainFrameRef}
         onClick={handleClick}
         className="relative flex h-full w-[68%] items-center justify-center overflow-hidden border border-black dark:border-white max-md:aspect-square max-md:w-auto"
       >
@@ -73,4 +73,4 @@ const ArtBoard = ({ imageList, index, changeIndex }: ArtBoardProps) => {
   );
 };
 
-export default ArtBoard;
+export default Main;
