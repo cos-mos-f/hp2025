@@ -24,7 +24,7 @@ const Works = ({ imageList, onClickImage }: WorksProps) => {
           key={key}
           src={`${base}images/artWorks/${node.image.filename}`}
           alt={node.image.title}
-          className="border border-black dark:border-white"
+          className="border border-black"
           style={{ width: `${node.width}px`, height: `${node.height}px` }}
           loading="lazy"
           onClick={() => {
@@ -59,7 +59,7 @@ const Works = ({ imageList, onClickImage }: WorksProps) => {
       ref={worksRef}
       className="flex h-screen w-fit flex-row py-10 max-md:h-[100vw] "
     >
-      <div className="h-full w-[40vw] shrink-0 max-md:w-[40vh] " />
+      <div className="h-full w-[40vw] shrink-0 max-md:w-[40vh] gap-3 " />
       {isLoading ? (
         <div className="flex items-center justify-center">
           <Loading />

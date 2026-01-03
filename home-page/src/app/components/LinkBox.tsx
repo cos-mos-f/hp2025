@@ -23,7 +23,7 @@ const LinkBox = ({ platform, userId, url }: LinkBoxProps) => {
       <img
         src={`${base}images/arrow.svg`}
         alt="arrow"
-        className="absolute -bottom-2 right-0 h-[50px] opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:invert dark:brightness-200"
+        className="absolute -bottom-2 right-0 h-[50px] opacity-0 transition-opacity duration-200 group-hover:opacity-100"
       />
     </a>
   );

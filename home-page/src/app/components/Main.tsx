@@ -59,7 +59,7 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
       </div>
       <div
         ref={mainFrameRef}
-        className="group relative flex h-full w-[68%] items-center justify-center overflow-hidden border border-black dark:border-white max-md:aspect-square max-md:w-auto"
+        className="group relative flex h-full w-[68%] items-center justify-center overflow-hidden border border-black max-md:aspect-square max-md:w-auto"
       >
         {!isActiveLoaded && (
           <div
@@ -104,7 +104,7 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
             viewBox="0 0 48 48"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="w-12 h-12 max-md:w-8 max-md:h-8 stroke-black dark:stroke-white pointer-events-none"
+            className="w-12 h-12 max-md:w-8 max-md:h-8 stroke-black pointer-events-none"
           >
             <title>Previous</title>
             <circle cx="24" cy="24" r="23" strokeWidth="1" />
@@ -130,7 +130,7 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
             viewBox="0 0 48 48"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="w-12 h-12 max-md:w-8 max-md:h-8 stroke-black dark:stroke-white pointer-events-none"
+            className="w-12 h-12 max-md:w-8 max-md:h-8 stroke-black pointer-events-none"
           >
             <title>Next</title>
             <circle cx="24" cy="24" r="23" strokeWidth="1" />
