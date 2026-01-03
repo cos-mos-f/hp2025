@@ -8,7 +8,7 @@ import Loading from "./Loading";
 
 type GalleryProps = {
   imageList: ImageItemWithIndex[];
-  onClickImage: (index: number) => void;
+  onClickImage: (filename: string) => void;
 };
 
 const Gallery = ({ imageList, onClickImage }: GalleryProps) => {
@@ -26,7 +26,7 @@ const Gallery = ({ imageList, onClickImage }: GalleryProps) => {
           className="border border-black dark:border-white"
           style={{ width: `${node.width}px`, height: `${node.height}px` }}
           loading="lazy"
-          onClick={() => onClickImage(node.image.index)}
+          onClick={() => onClickImage(node.image.filename)}
         />
       );
     }

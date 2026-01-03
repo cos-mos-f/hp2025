@@ -33,6 +33,15 @@ export const useImages = () => {
         (galleryType === "Work" && image.tag.includes("w"))
       );
     });
+  const getIndexByFilename = (filename: string) => {
+    return filteredImages.findIndex((image) => image.filename === filename);
+  };
 
-  return { galleryType, setGalleryType, allImages, filteredImages };
+  return {
+    galleryType,
+    setGalleryType,
+    allImages,
+    filteredImages,
+    getIndexByFilename,
+  };
 };
