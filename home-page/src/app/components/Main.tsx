@@ -38,7 +38,7 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
   }, [activeImage.filename, index]);
 
   return (
-    <div className="flex w-screen flex-row items-end justify-end p-10 text-center">
+    <div className="flex h-screen w-screen flex-row items-end justify-end p-10 text-center max-md:h-[100vw] max-md:w-[100vh]">
       <div className="origin-right scale-x-[1.3] mb-0 mr-5 h-[30px] select-text text-[16pt] tracking-[-1px] max-md:text-[10pt]">
         {activeImage.title}
       </div>
