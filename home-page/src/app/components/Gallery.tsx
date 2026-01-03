@@ -1,4 +1,4 @@
-import type { ImageItemWithIndex } from "../hooks/images";
+import type { ImageItem } from "../hooks/images";
 import {
   useGallery,
   type GalleryLayoutGroup,
@@ -7,7 +7,7 @@ import {
 import Loading from "./Loading";
 
 type GalleryProps = {
-  imageList: ImageItemWithIndex[];
+  imageList: ImageItem[];
   onClickImage: (filename: string) => void;
 };
 

@@ -9,10 +9,6 @@ export type ImageItem = {
   tag: string;
 };
 
-export type ImageItemWithIndex = ImageItem & {
-  index: number;
-};
-
 export type GalleryType = "All" | "FanArt" | "Original" | "Work";
 
 const galleryTypeAtom = atom<GalleryType>("All");
@@ -33,10 +29,11 @@ export const useImages = () => {
         (galleryType === "Work" && image.tag.includes("w"))
       );
     });
-  const getIndexByFilename = (filename: string) => {
-    return filteredImages.findIndex((image) => image.filename === filename);
-  };
 
+  const getIndexByFilename = (filename: string): number => {
+    const image = filteredImages.find((img) => img.filename === filename);
+    return image ? image.index : -1;
+  };
   return {
     galleryType,
     setGalleryType,

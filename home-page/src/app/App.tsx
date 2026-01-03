@@ -22,7 +22,8 @@ export default function App() {
     getIndexByFilename,
   } = useImages();
   const { isLoading } = usePreloadImages(allImages, 10);
-  const { scrollPosition, setScrollPosition } = useScroll();
+  const { scrollPosition, setScrollPosition, setArtBoardScrollPosition } =
+    useScroll();
   const indexToScrollPosition = (index: number, total: number) => {
     if (total <= 1) return 0;
     return index / (total - 1);
@@ -116,7 +117,7 @@ export default function App() {
           onWheel={(e) => {
             const viewport = e.currentTarget;
             viewport.scrollLeft += e.deltaY;
-            e.preventDefault();
+            // e.preventDefault();
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -133,7 +134,12 @@ export default function App() {
                 imageList={filteredImages}
                 onClickImage={(filename) => {
                   setPageType("ArtBoard");
-                  setCurrentIndex(getIndexByFilename(filename));
+                  setArtBoardScrollPosition(
+                    indexToScrollPosition(
+                      getIndexByFilename(filename),
+                      filteredImages.length,
+                    ),
+                  );
                 }}
               />
             ) : (

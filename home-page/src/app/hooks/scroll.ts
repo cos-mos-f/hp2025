@@ -20,5 +20,10 @@ export const useScroll = () => {
     pageType === "Gallery"
       ? setGalleryScrollPosition
       : setArtBoardScrollPosition;
-  return { scrollPosition, setScrollPosition };
+  return {
+    scrollPosition,
+    setScrollPosition,
+    setGalleryScrollPosition,
+    setArtBoardScrollPosition,
+  };
 };

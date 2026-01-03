@@ -5,11 +5,11 @@ import {
   useRef,
   useState,
 } from "react";
-import type { ImageItemWithIndex } from "./images";
+import type { ImageItem } from "./images";
 
 export type GalleryLayoutImage = {
   type: "image";
-  image: ImageItemWithIndex;
+  image: ImageItem;
   width: number;
   height: number;
 };
@@ -22,7 +22,7 @@ export type GalleryLayoutGroup = {
 
 export type GalleryLayoutNode = GalleryLayoutImage | GalleryLayoutGroup;
 
-export const useGallery = (imageList: ImageItemWithIndex[]) => {
+export const useGallery = (imageList: ImageItem[]) => {
   const galleryRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<GalleryLayoutGroup[]>([]);
   const [isLoading] = useState(false);
