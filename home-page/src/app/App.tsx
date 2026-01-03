@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import Loading from "./components/Loading";
 import Main from "./components/Main";
 import Works from "./components/Works";
@@ -11,6 +11,7 @@ import { useImages } from "./hooks/images";
 import { usePreloadImages } from "./hooks/preloadImages";
 import * as RadixScrollArea from "@radix-ui/react-scroll-area";
 import { useMainIndexQuery, useScroll } from "./hooks/scroll";
+import { useSmoothWheel } from "./hooks/smoothWheel";
 
 export default function App() {
   const { pageType, setPageType } = usePageType();
@@ -32,6 +33,7 @@ export default function App() {
 
   const touchStartX = useRef(0);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const isScrollbarInputRef = useRef(false);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const isMobile = window.innerWidth <= 768;
@@ -56,6 +58,38 @@ export default function App() {
       setScrollPosition(0);
     }
   };
+
+  const { addDelta, setTarget, stop } = useSmoothWheel({
+    getMax: () => {
+      const viewport = viewportRef.current;
+      if (!viewport) return 0;
+      return Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    },
+    getCurrent: () => {
+      const viewport = viewportRef.current;
+      return viewport ? viewport.scrollLeft : 0;
+    },
+    setCurrent: (value) => {
+      const viewport = viewportRef.current;
+      if (viewport) {
+        viewport.scrollLeft = value;
+      }
+    },
+    onStep: (value, max) => {
+      if (max > 0) {
+        setScrollPosition(value / max);
+      } else {
+        setScrollPosition(0);
+      }
+    },
+  });
+
+  const { addDelta: addPositionDelta } = useSmoothWheel({
+    getMax: () => 1,
+    getCurrent: () => scrollPosition,
+    setCurrent: setScrollPosition,
+    epsilon: 0.002,
+  });
 
   // Sync scrollPosition with viewport scroll
   useEffect(() => {
@@ -85,7 +119,20 @@ export default function App() {
     const targetScroll = scrollPosition * maxScroll;
 
     viewport.scrollLeft = targetScroll;
-  }, [scrollPosition]);
+    if (isScrollbarInputRef.current) {
+      setTarget(targetScroll);
+      stop();
+      isScrollbarInputRef.current = false;
+    }
+  }, [scrollPosition, setTarget, stop]);
+
+  const handleScrollbarPositionChange = useCallback(
+    (position: number) => {
+      isScrollbarInputRef.current = true;
+      setScrollPosition(position);
+    },
+    [setScrollPosition],
+  );
 
   if (isLoading) {
     return <Loading />;
@@ -103,7 +150,21 @@ export default function App() {
       </div>
       <CustomScrollbar
         scrollPosition={scrollPosition}
-        setScrollPosition={setScrollPosition}
+        setScrollPosition={handleScrollbarPositionChange}
+        onWheelDelta={(deltaRatio) => {
+          const viewport = viewportRef.current;
+          if (!viewport) return;
+          const maxScroll = Math.max(
+            0,
+            viewport.scrollWidth - viewport.clientWidth,
+          );
+          const scaledDeltaRatio = deltaRatio * 0.5;
+          if (maxScroll > 0) {
+            addDelta(scaledDeltaRatio * maxScroll);
+          } else {
+            addPositionDelta(scaledDeltaRatio);
+          }
+        }}
       />
       <RadixScrollArea.Root
         className="
@@ -117,16 +178,14 @@ export default function App() {
           className="h-full w-full"
           onWheel={(e) => {
             const viewport = e.currentTarget;
-            viewport.scrollLeft += e.deltaY;
-            const maxScroll = Math.max(
-              0,
-              viewport.scrollWidth - viewport.clientWidth,
-            );
-            if (maxScroll > 0) {
-              setScrollPosition(viewport.scrollLeft / maxScroll);
-            } else {
-              setScrollPosition(0);
+            let delta =
+              Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+            if (e.deltaMode === 1) {
+              delta *= 16;
+            } else if (e.deltaMode === 2) {
+              delta *= viewport.clientHeight;
             }
+            addDelta(delta * 2.1);
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}

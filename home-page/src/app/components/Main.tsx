@@ -10,7 +10,7 @@ type MainProps = {
 };
 
 const Main = ({ imageList, index, changeIndex }: MainProps) => {
-  const { mainFrameRef, base, frameSize, loadedMap, handleClick } = useMain(
+  const { mainFrameRef, base, frameSize, loadedMap } = useMain(
     imageList,
     index,
     changeIndex,
@@ -59,10 +59,6 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
       </div>
       <div
         ref={mainFrameRef}
-        onClick={(e) => {
-          trackImageClick(activeImage.filename, "main_frame");
-          handleClick(e);
-        }}
         className="group relative flex h-full w-[68%] items-center justify-center overflow-hidden border border-black dark:border-white max-md:aspect-square max-md:w-auto"
       >
         {!isActiveLoaded && (
@@ -99,7 +95,7 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
         <button
           type="button"
           onClick={handlePrev}
-          className="absolute left-2 h-full z-20  opacity-20 hover:opacity-100 active:opacity-100 cursor-pointer"
+          className="absolute left-2 w-[30%] h-full z-20  opacity-20 hover:opacity-100 active:opacity-100 cursor-pointer"
           aria-label="Previous image"
         >
           <svg
@@ -125,7 +121,7 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
         <button
           type="button"
           onClick={handleNext}
-          className="absolute right-2 h-full z-20  opacity-20 hover:opacity-100 active:opacity-100 cursor-pointer"
+          className="absolute flex items-center justify-end right-2 w-[30%] h-full z-20  opacity-20 hover:opacity-100 active:opacity-100 cursor-pointer"
           aria-label="Next image"
         >
           <svg
