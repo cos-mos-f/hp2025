@@ -1,6 +1,7 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import Line from "./Line";
 import type { PageType } from "../hooks/pageType";
+import { trackSectionChange } from "../utils/analytics";
 
 type MainSectionProps = {
   pageType: PageType;
@@ -14,7 +15,11 @@ const MainSection = ({ pageType, setPageType }: MainSectionProps) => {
   return (
     <Tabs.Root
       value={pageType}
-      onValueChange={(value) => setPageType(value as PageType)}
+      onValueChange={(value) => {
+        const newPageType = value as PageType;
+        setPageType(newPageType);
+        trackSectionChange(newPageType);
+      }}
       className="flex h-full w-[280px] flex-col items-start justify-end pl-10 max-md:w-[28vh]"
     >
       <Tabs.List className="flex w-full flex-col items-start">

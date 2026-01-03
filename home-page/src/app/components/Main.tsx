@@ -1,5 +1,7 @@
 import { useMain } from "../hooks/main";
 import type { ImageItem } from "../hooks/images";
+import { trackImageView, trackImageClick } from "../utils/analytics";
+import { useEffect } from "react";
 
 type MainProps = {
   imageList: ImageItem[];
@@ -29,6 +31,12 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
   const activeImageSize = getScaledSize(activeImage);
   const isActiveLoaded = Boolean(loadedMap[activeImage.filename]);
 
+  useEffect(() => {
+    if (activeImage) {
+      trackImageView(activeImage.filename, index);
+    }
+  }, [activeImage.filename, index]);
+
   return (
     <div className="flex w-screen flex-row items-end justify-end p-10 text-center">
       <div className="origin-right scale-x-[1.3] mb-0 mr-5 h-[30px] select-text text-[16pt] tracking-[-1px] max-md:text-[10pt]">
@@ -36,7 +44,10 @@ const Main = ({ imageList, index, changeIndex }: MainProps) => {
       </div>
       <div
         ref={mainFrameRef}
-        onClick={handleClick}
+        onClick={(e) => {
+          trackImageClick(activeImage.filename, "main_frame");
+          handleClick(e);
+        }}
         className="relative flex h-full w-[68%] items-center justify-center overflow-hidden border border-black dark:border-white max-md:aspect-square max-md:w-auto"
       >
         {!isActiveLoaded && (

@@ -2,6 +2,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import type { WorksType } from "../hooks/images";
 import type { PageType } from "../hooks/pageType";
 import LinkBox from "./LinkBox";
+import { trackWorksFilter } from "../utils/analytics";
 
 type SubSectionProps = {
   pageType: PageType;
@@ -22,7 +23,11 @@ const SubSection = ({
     return (
       <Tabs.Root
         value={worksType}
-        onValueChange={(value) => setWorksType(value as WorksType)}
+        onValueChange={(value) => {
+          const newWorksType = value as WorksType;
+          setWorksType(newWorksType);
+          trackWorksFilter(newWorksType);
+        }}
         className="flex h-full flex-col items-start justify-end select-text"
       >
         <Tabs.List className="flex flex-col items-start gap-2">

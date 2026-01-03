@@ -1,3 +1,5 @@
+import { trackLinkClick } from "../utils/analytics";
+
 interface LinkBoxProps {
   platform: string;
   userId: string;
@@ -13,6 +15,7 @@ const LinkBox = ({ platform, userId, url }: LinkBoxProps) => {
       className="group relative flex h-10 items-end pr-12 no-underline"
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => trackLinkClick(platform, url)}
     >
       <span className="w-[150px]">{platform}</span>
       <span className="select-text">{userId}</span>

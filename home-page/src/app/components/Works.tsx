@@ -5,6 +5,7 @@ import {
   type WorksLayoutNode,
 } from "../hooks/works";
 import Loading from "./Loading";
+import { trackImageClick } from "../utils/analytics";
 
 type WorksProps = {
   imageList: ImageItem[];
@@ -26,7 +27,10 @@ const Works = ({ imageList, onClickImage }: WorksProps) => {
           className="border border-black dark:border-white"
           style={{ width: `${node.width}px`, height: `${node.height}px` }}
           loading="lazy"
-          onClick={() => onClickImage(node.image.filename)}
+          onClick={() => {
+            trackImageClick(node.image.filename, "works_grid");
+            onClickImage(node.image.filename);
+          }}
         />
       );
     }
