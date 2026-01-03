@@ -10,7 +10,7 @@ import { usePageType } from "./hooks/pageType";
 import { useImages } from "./hooks/images";
 import { usePreloadImages } from "./hooks/preloadImages";
 import * as RadixScrollArea from "@radix-ui/react-scroll-area";
-import { useScroll } from "./hooks/scroll";
+import { useArtBoardIndexQuery, useScroll } from "./hooks/scroll";
 
 export default function App() {
   const { pageType, setPageType } = usePageType();
@@ -22,24 +22,11 @@ export default function App() {
     getIndexByFilename,
   } = useImages();
   const { isLoading } = usePreloadImages(allImages, 10);
-  const { scrollPosition, setScrollPosition, setArtBoardScrollPosition } =
-    useScroll();
-  const indexToScrollPosition = (index: number, total: number) => {
-    if (total <= 1) return 0;
-    return index / (total - 1);
-  };
-  const scrollPositionToIndex = (position: number, total: number) => {
-    if (total <= 1) return 0;
-    return Math.round(position * (total - 1));
-  };
+  const { scrollPosition, setScrollPosition } = useScroll();
 
   const total = filteredImages.length;
-  const currentIndex = scrollPositionToIndex(scrollPosition, total);
-
-  const setCurrentIndex = (index: number) => {
-    const position = indexToScrollPosition(index, total);
-    setScrollPosition(position);
-  };
+  const { artBoardIndex: currentIndex, setArtBoardIndex } =
+    useArtBoardIndexQuery(total);
 
   const touchStartX = useRef(0);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -127,19 +114,14 @@ export default function App() {
               <ArtBoard
                 imageList={allImages}
                 index={currentIndex}
-                changeIndex={setCurrentIndex}
+                changeIndex={setArtBoardIndex}
               />
             ) : pageType === "Gallery" ? (
               <Gallery
                 imageList={filteredImages}
                 onClickImage={(filename) => {
                   setPageType("ArtBoard");
-                  setArtBoardScrollPosition(
-                    indexToScrollPosition(
-                      getIndexByFilename(filename),
-                      filteredImages.length,
-                    ),
-                  );
+                  setArtBoardIndex(getIndexByFilename(filename));
                 }}
               />
             ) : (
