@@ -12,7 +12,7 @@ const LinkBox = ({ platform, userId, url }: LinkBoxProps) => {
   return (
     <a
       href={url}
-      className="group relative flex h-10 items-end pr-12 no-underline"
+      className="pointer-events-auto group relative flex h-10 items-end pr-12 no-underline"
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => trackLinkClick(platform, url)}

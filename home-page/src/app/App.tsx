@@ -140,7 +140,7 @@ export default function App() {
 
   return (
     <div className="relative h-screen w-screen overflow-auto max-md:h-[100vw] max-md:w-[100vh]">
-      <div className="fixed left-0 top-0 z-20 flex h-full w-fit p-11">
+      <div className="pointer-events-none fixed left-0 top-0 z-20 flex h-full w-fit p-11">
         <MainSection pageType={pageType} setPageType={setPageType} />
         <SubSection
           pageType={pageType}
