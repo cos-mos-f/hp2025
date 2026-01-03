@@ -2,15 +2,45 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8" />
-        <script>
-            // GitHub Pages SPA redirect
-            // パスとクエリパラメータを特殊なクエリパラメータとしてindex.htmlに渡す
-            (function () {
-                var path = location.pathname + location.search + location.hash;
-                var redirect = "/?redirect=" + encodeURIComponent(path);
-                location.replace(redirect);
-            })();
-        </script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>404 - Page Not Found</title>
+        <style>
+            body {
+                font-family: system-ui, -apple-system, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                background: #f5f5f5;
+            }
+            .container {
+                text-align: center;
+                padding: 2rem;
+            }
+            h1 {
+                font-size: 3rem;
+                margin: 0;
+                color: #333;
+            }
+            p {
+                color: #666;
+                margin: 1rem 0;
+            }
+            a {
+                color: #0066cc;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
     </head>
-    <body></body>
+    <body>
+        <div class="container">
+            <h1>404</h1>
+            <p>お探しのページが見つかりません</p>
+            <p><a href="/">トップページに戻る</a></p>
+        </div>
+    </body>
 </html>
