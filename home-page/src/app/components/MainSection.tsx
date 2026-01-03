@@ -20,7 +20,7 @@ const MainSection = ({ pageType, setPageType }: MainSectionProps) => {
       <Tabs.List className="flex w-full flex-col items-start">
         <Tabs.Trigger
           value="ArtBoard"
-          className="pb-8 text-left text-[28pt] font-100 leading-[32pt] tracking-[-2px] transition-opacity hover:opacity-80 data-[state=active]:opacity-100 max-md:text-[20pt]"
+          className="origin-left scale-x-[1.5] pb-8 text-left text-[28pt] font-100 leading-[32pt] tracking-[-2px] transition-opacity hover:opacity-80 data-[state=active]:opacity-100 max-md:text-[20pt]"
         >
           cosmos
           <br />
