@@ -32,6 +32,8 @@ jobs:
         working-directory: home-page
         env:
           NODE_ENV: production
+      - name: Add .nojekyll
+        run: touch home-page/dist/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
           # Path must be relative to the repository root
