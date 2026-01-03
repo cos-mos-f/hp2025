@@ -85,7 +85,7 @@ export const useImages = (pageType: PageType) => {
   }, [worksType, pageType]);
 
   const allImages = imageList;
-  const filteredImages = allImages
+  const filteredImages = imageList
     .map((image, index) => ({ ...image, index }))
     .filter((image) => {
       if (worksType === "All") return true;
