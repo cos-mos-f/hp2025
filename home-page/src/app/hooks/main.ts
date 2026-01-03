@@ -45,7 +45,7 @@ export const useMain = (
   useEffect(() => {
     const interval = setInterval(() => {
       changeIndex((index + 1) % imageList.length);
-    }, 4500);
+    }, 3500);
     return () => clearInterval(interval);
   }, [index, changeIndex, imageList.length]);
 

@@ -1,5 +1,5 @@
 import { atom, useAtom } from "jotai";
-import { use, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { usePageType, type PageType } from "./pageType";
 import { useWorksType } from "./images";
 
