@@ -25,7 +25,7 @@ export default function App() {
   const { isLoading } = usePreloadImages(allImages, 10);
   const { scrollPosition, setScrollPosition } = useScroll();
 
-  const total = filteredImages.length;
+  const total = allImages.length;
   const { mainIndex: currentIndex, setMainIndex } = useMainIndexQuery(
     total,
     pageType,
