@@ -10,11 +10,7 @@ type SubSectionProps = {
   setWorksType: (worksType: WorksType) => void;
 };
 
-const SubSection = ({
-  pageType,
-  worksType,
-  setWorksType,
-}: SubSectionProps) => {
+const SubSection = ({ pageType, worksType, setWorksType }: SubSectionProps) => {
   if (pageType === "Main") {
     return <div />;
   }
