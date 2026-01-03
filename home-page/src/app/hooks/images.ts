@@ -32,7 +32,10 @@ const readWorksTypeFromQuery = (): WorksType | null => {
   }
   return null;
 };
-
+export const useWorksType = () => {
+  const [worksType, setWorksType] = useAtom(worksTypeAtom);
+  return { worksType, setWorksType };
+};
 export const useImages = (pageType: PageType) => {
   const [worksType, setWorksType] = useAtom(worksTypeAtom);
   const hasSyncedFromQuery = useRef(false);

@@ -1,6 +1,7 @@
 import { atom, useAtom } from "jotai";
-import { useCallback, useEffect, useRef } from "react";
+import { use, useCallback, useEffect, useRef } from "react";
 import { usePageType, type PageType } from "./pageType";
+import { useWorksType } from "./images";
 
 const worksScrollPositionAtom = atom(0); // 0-1
 
@@ -33,6 +34,14 @@ const readIndexFromQuery = () => {
 
 export const useScroll = () => {
   const { pageType } = usePageType();
+  const { worksType } = useWorksType();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (pageType !== "Works") return;
+    setWorksScrollPosition(0);
+  }, [worksType]);
+
   const [worksScrollPosition, setWorksScrollPosition] = useAtom(
     worksScrollPositionAtom,
   );
