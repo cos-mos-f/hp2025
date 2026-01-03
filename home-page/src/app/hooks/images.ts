@@ -1,6 +1,6 @@
 import imageListData from "../imageList.json";
 import { atom, useAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { PageType } from "./pageType";
 
 export type ImageItem = {
@@ -35,6 +35,7 @@ const readWorksTypeFromQuery = (): WorksType | null => {
 
 export const useImages = (pageType: PageType) => {
   const [worksType, setWorksType] = useAtom(worksTypeAtom);
+  const hasSyncedFromQuery = useRef(false);
 
   // URLクエリパラメータからworksTypeを同期
   useEffect(() => {
@@ -54,6 +55,17 @@ export const useImages = (pageType: PageType) => {
   // worksTypeが変更されたらURLを更新
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (!hasSyncedFromQuery.current) {
+      const url = new URL(window.location.href);
+      const currentWorksType = url.searchParams.get("worksType");
+      if (currentWorksType === null) {
+        hasSyncedFromQuery.current = true;
+      } else if (currentWorksType === worksType) {
+        hasSyncedFromQuery.current = true;
+      } else {
+        return;
+      }
+    }
     if (pageType !== "Works") {
       const url = new URL(window.location.href);
       if (url.searchParams.has("worksType")) {
